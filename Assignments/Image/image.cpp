@@ -1,10 +1,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include "image.h"
-#include <../Util/cmdLineParser.h>
-#include <../Util/exceptions.h>
-#include <bmp.h>
-#include <jpeg.h>
+#include <Util/cmdLineParser.h>
+#include <Util/exceptions.h>
+#include <Image/bmp.h>
+#include <Image/jpeg.h>
 
 ///////////
 // Pixel //

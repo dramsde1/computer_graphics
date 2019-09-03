@@ -6,8 +6,7 @@
 ////////////////////////////
 // Image processing stuff //
 ////////////////////////////
-
-Pixel32::Pixel( const Pixel32& p )
+Pixel::Pixel( const Pixel32& p )
 {
 	Util::Throw( "Pixel::Pixel undefined" );
 }
