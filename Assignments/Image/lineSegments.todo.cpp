@@ -1,6 +1,6 @@
 #include "lineSegments.h"
 #include <math.h>
-#include <Util/exceptions.h>
+#include "../Util/exceptions.h"
 
 ////////////////////////////
 // Image processing stuff //

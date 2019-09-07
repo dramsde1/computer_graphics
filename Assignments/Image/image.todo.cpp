@@ -1,7 +1,7 @@
 #include "image.h"
 #include <stdlib.h>
 #include <math.h>
-#include <Util/exceptions.h>
+#include "../Util/exceptions.h"
 
 ////////////////////////////
 // Image processing stuff //
@@ -18,6 +18,7 @@ Pixel32::Pixel32( const Pixel& p )
 Image32 Image32::addRandomNoise( float noise ) const
 {
 	Util::Throw( "Image32::addRandomNoise undefined" );
+    //(*this)(0,0).
 	return Image32();
 }
 Image32 Image32::brighten( float brightness ) const
@@ -32,9 +33,57 @@ Image32 Image32::luminance( void ) const
 	return Image32();
 }
 
+////contrast help function///
+void getContrast(float factor, Pixel32* pixel)
+{
+    //change the range from 0-255 to -0.5-0.5 
+    double red = ((pixel->r * 1.0)/255 - 0.5) * factor;
+    double green = ((pixel->g * 1.0)/255 - 0.5) * factor;
+    double blue = ((pixel->b * 1.0)/255 - 0.5) * factor;
+    
+    //keep pixel values inside boundary
+    if (red > 0.5) {
+        red = 0.5;
+    }
+    else if (red < -0.5) {
+        red = -0.5;
+    }
+
+    if (green > 0.5) { 
+        green = 0.5;
+    }
+    else if (green < -0.5){ 
+        green = -0.5;
+    }
+
+    if (blue > 0.5) { 
+        blue = 0.5;
+    }
+    else if (blue < -0.5) { 
+        blue = -0.5;
+    }
+
+    //convert the vals from -0.5-0.5 to 0-255
+    pixel->r = (red + 0.5) * 255;
+    pixel->g = (green + 0.5) * 255;
+    pixel->b = (blue + 0.5) * 255;
+}
+
+/////////////////////////////////////////////
+
 Image32 Image32::contrast( float contrast ) const
 {
 	Util::Throw( "Image32::contrast undefined" );
+    //(*this)(0,0).
+    Image32 img = (*this);
+    int r = (*this).width();
+    int c = (*this).height();
+    for (int i = 0; i < r; i++) {
+       for (int j = 0; j < c; j++) {
+          Pixel32 pixel = img(r, c);
+          getContrast(contrast, pixel);
+       }
+    }
 	return Image32();
 }
 
