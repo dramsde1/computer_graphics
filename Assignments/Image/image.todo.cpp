@@ -80,12 +80,12 @@ Image32 Image32::luminance( void ) const
 }
 
 ////contrast help function///
-void Image32::getContrast(float factor, Pixel32* pixel) const
+void Image32::getContrast(float factor, Pixel32& pixel) const
 {
     //change the range from 0-255 to -0.5-0.5 
-    double red = ((pixel->r * 1.0)/255 - 0.5) * factor;
-    double green = ((pixel->g * 1.0)/255 - 0.5) * factor;
-    double blue = ((pixel->b * 1.0)/255 - 0.5) * factor;
+    double red = ((pixel.r * 1.0)/255 - 0.5) * factor;
+    double green = ((pixel.g * 1.0)/255 - 0.5) * factor;
+    double blue = ((pixel.b * 1.0)/255 - 0.5) * factor;
     
     //keep pixel values inside boundary
     if (red > 0.5) {
@@ -110,9 +110,9 @@ void Image32::getContrast(float factor, Pixel32* pixel) const
     }
 
     //convert the vals from -0.5-0.5 to 0-255
-    pixel->r = (red + 0.5) * 255;
-    pixel->g = (green + 0.5) * 255;
-    pixel->b = (blue + 0.5) * 255;
+    pixel.r = (red + 0.5) * 255;
+    pixel.g = (green + 0.5) * 255;
+    pixel.b = (blue + 0.5) * 255;
 }
 
 /////////////////////////////////////////////
@@ -121,16 +121,17 @@ Image32 Image32::contrast( float contrast ) const
 {
 	//Util::Throw( "Image32::contrast undefined" );
     ////fix how this works
-    Image32& img = (*this);
+    Image32* img = new Image32();
     int r = (*this).width();
     int c = (*this).height();
 
     for (int i = 0; i < r; i++) {
        for (int j = 0; j < c; j++) {
-          getContrast(contrast, img(r, c));
+          (*img)(i,j) = (*this)(i,j);
+          getContrast(contrast, (*img)(i,j));
        }
     }
-	return Image32();
+	return (*img);
 }
 
 Image32 Image32::saturate( float saturation ) const
