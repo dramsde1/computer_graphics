@@ -98,7 +98,7 @@ public:
 	  * The value of the input parameter is the scale by which the contrast of the image should be changed.
 	  */
     ///////getContrast helper function///////
-    void getContrast(float factor, Pixel32* pixel);
+    void getContrast(float factor, Pixel32* pixel) const;
     /////////////////////////////////////////
 	Image32 contrast( float contrast ) const;
 

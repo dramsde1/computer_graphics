@@ -21,20 +21,66 @@ Image32 Image32::addRandomNoise( float noise ) const
     //(*this)(0,0).
 	return Image32();
 }
+
+//helper function for brighten
+unsigned char boundary(unsigned char rgb) {
+    if (rgb < 0) {
+        rgb = 0;
+    }
+    if (rgb > 255) {
+        rgb = 255;
+    }
+    return rgb;
+}
+
 Image32 Image32::brighten( float brightness ) const
 {
-	Util::Throw( "Image32::brightness undefined" );
+	//Util::Throw( "Image32::brightness undefined" );
+    int r = (*this).width();
+    int c = (*this).height();
+    unsigned char red = 0;
+    unsigned char green = 0;
+    unsigned char blue = 0;
+    for (int i = 0; i < r; i++) {
+       for (int j = 0; j < c; j++) {
+           red = boundary((*this)(i,j).r + brightness);
+           green = boundary((*this)(i,j).g + brightness);
+           blue = boundary((*this)(i,j).b + brightness);
+           //replace these vals with the pixel vals of the image
+       }
+    }
+
 	return Image32();
 }
 
 Image32 Image32::luminance( void ) const
 {
-	Util::Throw( "Image32::luminance undefined" );
-	return Image32();
+	//Util::Throw( "Image32::luminance undefined" );
+    int r = (*this).width();
+    int c = (*this).height();
+    Image32* img = new Image32();
+    unsigned char intensity = 0;
+    for (int i = 0; i < r; i++ ) {
+        for (int j = 0; j < c; j++) {
+           //get the intensity value
+           intensity = (unsigned char)
+               (((double)(*this)(i,j).r*0.30) 
+                + ((double)(*this)(i,j).g*0.59) 
+                + ((double)(*this)(i,j).b*0.11));
+           (*img)(i,j) = (*this)(i,j);
+           (*img)(i,j).r = intensity;
+           (*img)(i,j).g = intensity;
+           (*img)(i,j).b = intensity;
+           //make intensity the rgb values
+           //fix all the below problems 
+        }    
+    }
+
+	return (*img);
 }
 
 ////contrast help function///
-void getContrast(float factor, Pixel32* pixel)
+void Image32::getContrast(float factor, Pixel32* pixel) const
 {
     //change the range from 0-255 to -0.5-0.5 
     double red = ((pixel->r * 1.0)/255 - 0.5) * factor;
@@ -73,15 +119,15 @@ void getContrast(float factor, Pixel32* pixel)
 
 Image32 Image32::contrast( float contrast ) const
 {
-	Util::Throw( "Image32::contrast undefined" );
-    //(*this)(0,0).
-    Image32 img = (*this);
+	//Util::Throw( "Image32::contrast undefined" );
+    ////fix how this works
+    Image32& img = (*this);
     int r = (*this).width();
     int c = (*this).height();
+
     for (int i = 0; i < r; i++) {
        for (int j = 0; j < c; j++) {
-          Pixel32 pixel = img(r, c);
-          getContrast(contrast, pixel);
+          getContrast(contrast, img(r, c));
        }
     }
 	return Image32();
@@ -118,7 +164,7 @@ Image32 Image32::floydSteinbergDither( int bits ) const
 
 Image32 Image32::blur3X3( void ) const
 {
-	Util::Throw( "Image32::blur3X3 undefined" );
+	//Util::Throw( "Image32::blur3X3 undefined" );
 	return Image32();
 }
 

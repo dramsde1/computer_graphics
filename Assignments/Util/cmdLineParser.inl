@@ -27,7 +27,7 @@ DAMAGE.
 */
 #include <cassert>
 #include <string.h>
-#include <Util/exceptions.h>
+#include "../Util/exceptions.h"
 
 #ifdef WIN32
 inline int strcasecmp( const char* c1 , const char* c2 ){ return _stricmp( c1 , c2 ); }
