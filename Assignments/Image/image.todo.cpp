@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include "../Util/exceptions.h"
-
+#include <iostream>
+using std::cout;
+using std::endl;
 ////////////////////////////
 // Image processing stuff //
 ////////////////////////////
@@ -59,6 +61,7 @@ Image32 Image32::luminance( void ) const
     int r = (*this).width();
     int c = (*this).height();
     Image32* img = new Image32();
+    (*img).setSize(r, c);
     unsigned char intensity = 0;
     for (int i = 0; i < r; i++ ) {
         for (int j = 0; j < c; j++) {
@@ -67,15 +70,15 @@ Image32 Image32::luminance( void ) const
                (((double)(*this)(i,j).r*0.30) 
                 + ((double)(*this)(i,j).g*0.59) 
                 + ((double)(*this)(i,j).b*0.11));
-           (*img)(i,j) = (*this)(i,j);
            (*img)(i,j).r = intensity;
            (*img)(i,j).g = intensity;
            (*img)(i,j).b = intensity;
            //make intensity the rgb values
            //fix all the below problems 
         }    
+        cout << (*img).width() << endl;
+        cout << (*img).height() << endl;
     }
-
 	return (*img);
 }
 
