@@ -40,6 +40,8 @@ Image32 Image32::brighten( float brightness ) const
 	//Util::Throw( "Image32::brightness undefined" );
     int r = (*this).width();
     int c = (*this).height();
+    Image32* img = new Image32();
+    (*img).setSize(r, c);
     unsigned char red = 0;
     unsigned char green = 0;
     unsigned char blue = 0;
@@ -49,10 +51,12 @@ Image32 Image32::brighten( float brightness ) const
            green = boundary((*this)(i,j).g + brightness);
            blue = boundary((*this)(i,j).b + brightness);
            //replace these vals with the pixel vals of the image
+           (*img)(i,j).r = red;
+           (*img)(i,j).g = green;
+           (*img)(i,j).b = blue;
        }
     }
-
-	return Image32();
+	return (*img);
 }
 
 Image32 Image32::luminance( void ) const
@@ -82,41 +86,6 @@ Image32 Image32::luminance( void ) const
 	return (*img);
 }
 
-////contrast help function///
-void Image32::getContrast(float factor, Pixel32& pixel) const
-{
-    //change the range from 0-255 to -0.5-0.5 
-    double red = ((pixel.r * 1.0)/255 - 0.5) * factor;
-    double green = ((pixel.g * 1.0)/255 - 0.5) * factor;
-    double blue = ((pixel.b * 1.0)/255 - 0.5) * factor;
-    
-    //keep pixel values inside boundary
-    if (red > 0.5) {
-        red = 0.5;
-    }
-    else if (red < -0.5) {
-        red = -0.5;
-    }
-
-    if (green > 0.5) { 
-        green = 0.5;
-    }
-    else if (green < -0.5){ 
-        green = -0.5;
-    }
-
-    if (blue > 0.5) { 
-        blue = 0.5;
-    }
-    else if (blue < -0.5) { 
-        blue = -0.5;
-    }
-
-    //convert the vals from -0.5-0.5 to 0-255
-    pixel.r = (red + 0.5) * 255;
-    pixel.g = (green + 0.5) * 255;
-    pixel.b = (blue + 0.5) * 255;
-}
 
 /////////////////////////////////////////////
 
@@ -124,14 +93,42 @@ Image32 Image32::contrast( float contrast ) const
 {
 	//Util::Throw( "Image32::contrast undefined" );
     ////fix how this works
-    Image32* img = new Image32();
     int r = (*this).width();
     int c = (*this).height();
-
+    Image32* img = new Image32();
+    (*img).setSize(r, c);
     for (int i = 0; i < r; i++) {
        for (int j = 0; j < c; j++) {
-          (*img)(i,j) = (*this)(i,j);
-          getContrast(contrast, (*img)(i,j));
+        //change the range from 0-255 to -0.5-0.5 
+        double red = (((*this)(i,j).r * 1.0)/255 - 0.5) * contrast;
+        double green = (((*this)(i,j).g * 1.0)/255 - 0.5) * contrast;
+        double blue = (((*this)(i,j).b * 1.0)/255 - 0.5) * contrast;
+        
+        //keep pixel values inside boundary
+        if (red > 0.5) {
+            red = 0.5;
+        }
+        else if (red < -0.5) {
+            red = -0.5;
+        }
+
+        if (green > 0.5) { 
+            green = 0.5;
+        }
+        else if (green < -0.5){ 
+            green = -0.5;
+        }
+
+        if (blue > 0.5) { 
+            blue = 0.5;
+        }
+        else if (blue < -0.5) { 
+            blue = -0.5;
+        }
+        //convert the vals from -0.5-0.5 to 0-255
+        (*img)(i,j).r = (unsigned char)(red + 0.5) * 255;
+        (*img)(i,j).g = (unsigned char)(green + 0.5) * 255;
+        (*img)(i,j).b = (unsigned char)(blue + 0.5) * 255;
        }
     }
 	return (*img);
