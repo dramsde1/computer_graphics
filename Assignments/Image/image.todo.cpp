@@ -102,46 +102,33 @@ Image32 Image32::contrast( float contrast ) const
     ////fix how this works
     int r = (*this).width();
     int c = (*this).height();
+    double n = r * c;
+    double total = 0;
     Image32* img = new Image32();
     (*img).setSize(r, c);
+
+    double red = 0;
+    double green = 0;
+    double blue = 0;
+
     for (int i = 0; i < r; i++) {
        for (int j = 0; j < c; j++) {
-        //change the range from 0-255 to -0.5-0.5 
-        double red = (((*this)(i,j).r * 1.0)/255 - 0.5) * contrast;
-        double green = (((*this)(i,j).g * 1.0)/255 - 0.5) * contrast;
-        double blue = (((*this)(i,j).b * 1.0)/255 - 0.5) * contrast;
-
-
-        cout << red << endl;
-        cout << "here" << endl;
-        
-        //keep pixel values inside boundary
-        if (red > 0.5) {
-            red = 0.5;
-        }
-        else if (red < -0.5) {
-            red = -0.5;
-        }
-
-        if (green > 0.5) { 
-            green = 0.5;
-        }
-        else if (green < -0.5){ 
-            green = -0.5;
-        }
-
-        if (blue > 0.5) { 
-            blue = 0.5;
-        }
-        else if (blue < -0.5) { 
-            blue = -0.5;
-        }
-        //convert the vals from -0.5-0.5 to 0-255
-        (*img)(i,j).r = (unsigned char)(red + 0.5) * 255;
-        (*img)(i,j).g = (unsigned char)(green + 0.5) * 255;
-        (*img)(i,j).b = (unsigned char)(blue + 0.5) * 255;
+           total += ((double)(*this)(i,j).r*0.30 + (double)(*this)(i,j).g*0.59 + (double)(*this)(i,j).b*0.11);
        }
     }
+    double mean = total / n;
+    for (int i = 0; i < r; i++) {
+       for (int j = 0; j < c; j++) {
+           red = boundary(((double)(*this)(i,j).r - mean)*contrast + mean);
+           green = boundary(((double)(*this)(i,j).g - mean)*contrast + mean);
+           blue = boundary(((double)(*this)(i,j).b - mean)*contrast + mean);
+
+           (*img)(i,j).r = (unsigned char)red;
+           (*img)(i,j).g = (unsigned char)green;
+           (*img)(i,j).b = (unsigned char)blue;
+       }
+    }
+
 	return (*img);
 }
 
