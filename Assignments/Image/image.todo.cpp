@@ -32,7 +32,6 @@ double boundary(double rgb) {
     if (rgb > 255) {
         rgb = 255;
     }
-    cout << "yo" << endl;
     return rgb;
 }
 
@@ -134,8 +133,29 @@ Image32 Image32::contrast( float contrast ) const
 
 Image32 Image32::saturate( float saturation ) const
 {
-	Util::Throw( "Image32::saturation undefined" );
-	return Image32();
+	//Util::Throw( "Image32::saturation undefined" );
+
+    int r = (*this).width();
+    int c = (*this).height();
+    double luminance = 0;
+    double red = 0;
+    double green = 0;
+    double blue = 0;
+    Image32* img = new Image32();
+    (*img).setSize(r, c);
+    for (int i = 0; i < r; i++ ) {
+        for (int j = 0; j < c; j++) {
+            luminance = ((double)(*this)(i,j).r*0.30 + (double)(*this)(i,j).g*0.59 + (double)(*this)(i,j).b*0.11);
+            red = boundary(((double)(*this)(i,j).r - luminance)*saturation + luminance);
+            green = boundary(((double)(*this)(i,j).g - luminance)*saturation + luminance);
+            blue = boundary(((double)(*this)(i,j).b - luminance)*saturation + luminance);
+            (*img)(i,j).r = (unsigned char)red;
+            (*img)(i,j).g = (unsigned char)green;
+            (*img)(i,j).b = (unsigned char)blue;
+        }    
+    }
+
+	return (*img);
 }
 
 Image32 Image32::quantize( int bits ) const
