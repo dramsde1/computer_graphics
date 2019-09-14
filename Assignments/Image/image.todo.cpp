@@ -25,35 +25,42 @@ Image32 Image32::addRandomNoise( float noise ) const
 }
 
 //helper function for brighten
-unsigned char boundary(unsigned char rgb) {
+double boundary(double rgb) {
     if (rgb < 0) {
         rgb = 0;
     }
     if (rgb > 255) {
         rgb = 255;
     }
+    cout << "yo" << endl;
     return rgb;
 }
 
 Image32 Image32::brighten( float brightness ) const
+
 {
 	//Util::Throw( "Image32::brightness undefined" );
     int r = (*this).width();
     int c = (*this).height();
     Image32* img = new Image32();
     (*img).setSize(r, c);
-    unsigned char red = 0;
-    unsigned char green = 0;
-    unsigned char blue = 0;
+    
+    double red = 0;
+    double green = 0;
+    double blue = 0;
+
     for (int i = 0; i < r; i++) {
        for (int j = 0; j < c; j++) {
-           red = boundary((*this)(i,j).r + brightness);
-           green = boundary((*this)(i,j).g + brightness);
-           blue = boundary((*this)(i,j).b + brightness);
-           //replace these vals with the pixel vals of the image
-           (*img)(i,j).r = red;
-           (*img)(i,j).g = green;
-           (*img)(i,j).b = blue;
+          
+
+          red = boundary((double)(*this)(i,j).r * brightness);
+          green = boundary((double)(*this)(i,j).g * brightness);
+          blue = boundary((double)(*this)(i,j).b * brightness);
+
+          (*img)(i,j).r = (unsigned char)red;
+          (*img)(i,j).g = (unsigned char)green;
+          (*img)(i,j).b = (unsigned char)blue;
+
        }
     }
 	return (*img);
@@ -103,6 +110,10 @@ Image32 Image32::contrast( float contrast ) const
         double red = (((*this)(i,j).r * 1.0)/255 - 0.5) * contrast;
         double green = (((*this)(i,j).g * 1.0)/255 - 0.5) * contrast;
         double blue = (((*this)(i,j).b * 1.0)/255 - 0.5) * contrast;
+
+
+        cout << red << endl;
+        cout << "here" << endl;
         
         //keep pixel values inside boundary
         if (red > 0.5) {
