@@ -3,8 +3,16 @@
 #include <math.h>
 #include "../Util/exceptions.h"
 #include <iostream>
+#include <cmath>
+#include <vector>
+#include <numeric>
+using std::iota;
+using std::round;
+using std::pow;
 using std::cout;
 using std::endl;
+using std::vector;
+using std::floor;
 ////////////////////////////
 // Image processing stuff //
 ////////////////////////////
@@ -158,10 +166,62 @@ Image32 Image32::saturate( float saturation ) const
 	return (*img);
 }
 
+int normalize(int val)
+{
+    return (int)round(val / 255);
+}
+
+int denormalize(int val)
+{
+    return (int)round(val*255);
+}
+
 Image32 Image32::quantize( int bits ) const
 {
-	Util::Throw( "Image32::quantize undefined" );
-	return Image32();
+	//Util::Throw( "Image32::quantize undefined" );
+    int maxInRange = (int)(pow(2, bits));
+    int values[maxInRange];
+    //range of normalized values
+    std::iota(values, values + maxInRange, 0);
+
+    int spacing = 255 / (maxInRange - 1);
+    vector<int> range;
+    int count = 0;
+
+    for (int i = 0; i <= maxInRange - 1; i++) {
+        range.push_back(count);
+        count += spacing;
+    }
+
+    cout << spacing << endl;
+    for (std::vector<int>::const_iterator i = range.begin(); i != range.end(); ++i) {
+        std::cout << *i << ' ';
+    }
+    cout << " " << endl;
+    cout << "size" << endl;
+    cout << range.size() << endl;   
+    int r = (*this).width();
+    int c = (*this).height();
+    double red = 0;
+    double green = 0;
+    double blue = 0;
+
+    Image32* img = new Image32();
+    (*img).setSize(r, c);
+
+    for (int i = 0; i < r; i++ ) {
+        for (int j = 0; j < c; j++) {
+
+            red = (double)boundary(floor((*this)(i,j).r * maxInRange));
+            green = (double)boundary(floor((*this)(i,j).g * maxInRange));
+            blue = (double)boundary(floor((*this)(i,j).b * maxInRange));
+
+            (*img)(i,j).r = (unsigned char)red;
+            (*img)(i,j).g = (unsigned char)green;
+            (*img)(i,j).b = (unsigned char)blue;
+        }        
+    }
+	return (*img);
 }
 
 Image32 Image32::randomDither( int bits ) const
