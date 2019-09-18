@@ -185,18 +185,27 @@ Image32 Image32::quantize( int bits ) const
     std::iota(values, values + maxInRange, 0);
 
     int spacing = 255 / (maxInRange - 1);
-    vector<int> range;
+    vector<double> range;
     int count = 0;
 
+    //add all values to vector
     for (int i = 0; i <= maxInRange - 1; i++) {
         range.push_back(count);
         count += spacing;
     }
+    
+    //make sure the last value is 255
+    int n = range.size();
+    if (range[n - 1] != 255) {
+        range[n - 1] = 255;
+    }
 
     cout << spacing << endl;
-    for (std::vector<int>::const_iterator i = range.begin(); i != range.end(); ++i) {
+
+    for (std::vector<double>::const_iterator i = range.begin(); i != range.end(); ++i) {
         std::cout << *i << ' ';
     }
+
     cout << " " << endl;
     cout << "size" << endl;
     cout << range.size() << endl;   
@@ -205,22 +214,93 @@ Image32 Image32::quantize( int bits ) const
     double red = 0;
     double green = 0;
     double blue = 0;
+    bool redEndPoint = false;
+    bool greenEndPoint = false;
+    bool blueEndPoint = false;
+    double diffOne = 0;
+    double diffTwo = 0;
 
+        
     Image32* img = new Image32();
     (*img).setSize(r, c);
 
     for (int i = 0; i < r; i++ ) {
         for (int j = 0; j < c; j++) {
 
-            red = (double)boundary(floor((*this)(i,j).r * maxInRange));
-            green = (double)boundary(floor((*this)(i,j).g * maxInRange));
-            blue = (double)boundary(floor((*this)(i,j).b * maxInRange));
+            red = (double)(*this)(i,j).r;
+            green = (double)(*this)(i,j).g;
+            blue = (double)(*this)(i,j).b;
+
+
+            if (red == 0 || red == 255) {
+                redEndPoint = true;
+            }
+            if (green == 0 || green == 255) {
+                greenEndPoint = true;
+            }
+            if (blue == 0 || blue == 255) {
+                blueEndPoint = true;
+            }
+
+            //the range.end() should take care of the past the end edgecase
+            for (std::vector<double>::const_iterator i = range.begin(); i != range.end() - 1; ++i) {
+                if (redEndPoint) {
+                   break;
+                }
+                if (red > *i && red < *(i + 1)) {
+                    diffOne = red - *i;
+                    diffTwo = *(i + 1) - red;
+                    if (diffOne < diffTwo) {
+                        red = *i;
+                        break;
+                    }
+                    if (diffOne > diffTwo) {
+                        red = *(i + 1);
+                        break;
+                    }
+                }
+            }
+            for (std::vector<double>::const_iterator i = range.begin(); i != range.end() - 1; ++i) {
+                if (greenEndPoint) {
+                   break;
+                }
+                if (green > *i && green < *(i + 1)) {
+                    diffOne = green - *i;
+                    diffTwo = *(i + 1) - green;
+                    if (diffOne < diffTwo) {
+                        green = *i;
+                        break;
+                    }
+                    if (diffOne > diffTwo) {
+                        green = *(i + 1);
+                        break;
+                    }
+                }
+            }
+            for (std::vector<double>::const_iterator i = range.begin(); i != range.end() - 1; ++i) {
+                if (blueEndPoint) {
+                   break;
+                }
+                if (blue > *i && blue < *(i + 1)) {
+                    diffOne = blue - *i;
+                    diffTwo = *(i + 1) - blue;
+                    if (diffOne < diffTwo) {
+                        blue = *i;
+                        break;
+                    }
+                    if (diffOne > diffTwo) {
+                        blue = *(i + 1);
+                        break;
+                    }
+                }
+            }
 
             (*img)(i,j).r = (unsigned char)red;
             (*img)(i,j).g = (unsigned char)green;
             (*img)(i,j).b = (unsigned char)blue;
         }        
     }
+
 	return (*img);
 }
 
