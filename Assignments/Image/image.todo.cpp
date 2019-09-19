@@ -166,59 +166,17 @@ Image32 Image32::saturate( float saturation ) const
 	return (*img);
 }
 
-int normalize(int val)
-{
-    return (int)round(val / 255);
-}
-
-int denormalize(int val)
-{
-    return (int)round(val*255);
-}
 
 Image32 Image32::quantize( int bits ) const
+
 {
 	//Util::Throw( "Image32::quantize undefined" );
-    int maxInRange = (int)(pow(2, bits));
-    int values[maxInRange];
-    //range of normalized values
-    std::iota(values, values + maxInRange, 0);
 
-    int spacing = 255 / (maxInRange - 1);
-    vector<double> range;
-    int count = 0;
-
-    //add all values to vector
-    for (int i = 0; i <= maxInRange - 1; i++) {
-        range.push_back(count);
-        count += spacing;
-    }
-    
-    //make sure the last value is 255
-    int n = range.size();
-    if (range[n - 1] != 255) {
-        range[n - 1] = 255;
-    }
-
-    cout << spacing << endl;
-
-    for (std::vector<double>::const_iterator i = range.begin(); i != range.end(); ++i) {
-        std::cout << *i << ' ';
-    }
-
-    cout << " " << endl;
-    cout << "size" << endl;
-    cout << range.size() << endl;   
     int r = (*this).width();
     int c = (*this).height();
     double red = 0;
     double green = 0;
     double blue = 0;
-    bool redEndPoint = false;
-    bool greenEndPoint = false;
-    bool blueEndPoint = false;
-    double diffOne = 0;
-    double diffTwo = 0;
 
         
     Image32* img = new Image32();
@@ -231,69 +189,22 @@ Image32 Image32::quantize( int bits ) const
             green = (double)(*this)(i,j).g;
             blue = (double)(*this)(i,j).b;
 
+            red = red / 255;
+            blue = blue / 255;
+            green = green / 255;
 
-            if (red == 0 || red == 255) {
-                redEndPoint = true;
-            }
-            if (green == 0 || green == 255) {
-                greenEndPoint = true;
-            }
-            if (blue == 0 || blue == 255) {
-                blueEndPoint = true;
-            }
+            red = (double)floor(red * pow(2, bits));
+            blue = (double)floor(blue * pow(2, bits));
+            green = (double)floor(green * pow(2, bits));
 
-            //the range.end() should take care of the past the end edgecase
-            for (std::vector<double>::const_iterator i = range.begin(); i != range.end() - 1; ++i) {
-                if (redEndPoint) {
-                   break;
-                }
-                if (red > *i && red < *(i + 1)) {
-                    diffOne = red - *i;
-                    diffTwo = *(i + 1) - red;
-                    if (diffOne < diffTwo) {
-                        red = *i;
-                        break;
-                    }
-                    if (diffOne > diffTwo) {
-                        red = *(i + 1);
-                        break;
-                    }
-                }
-            }
-            for (std::vector<double>::const_iterator i = range.begin(); i != range.end() - 1; ++i) {
-                if (greenEndPoint) {
-                   break;
-                }
-                if (green > *i && green < *(i + 1)) {
-                    diffOne = green - *i;
-                    diffTwo = *(i + 1) - green;
-                    if (diffOne < diffTwo) {
-                        green = *i;
-                        break;
-                    }
-                    if (diffOne > diffTwo) {
-                        green = *(i + 1);
-                        break;
-                    }
-                }
-            }
-            for (std::vector<double>::const_iterator i = range.begin(); i != range.end() - 1; ++i) {
-                if (blueEndPoint) {
-                   break;
-                }
-                if (blue > *i && blue < *(i + 1)) {
-                    diffOne = blue - *i;
-                    diffTwo = *(i + 1) - blue;
-                    if (diffOne < diffTwo) {
-                        blue = *i;
-                        break;
-                    }
-                    if (diffOne > diffTwo) {
-                        blue = *(i + 1);
-                        break;
-                    }
-                }
-            }
+            red = (double)(red / (pow(2, bits) - 1));
+            blue = (double)(blue / (pow(2, bits) - 1));
+            green = (double)(green / (pow(2, bits) - 1));
+
+            red = red * 255;
+            blue = blue * 255;
+            green = green * 255;
+
 
             (*img)(i,j).r = (unsigned char)red;
             (*img)(i,j).g = (unsigned char)green;
