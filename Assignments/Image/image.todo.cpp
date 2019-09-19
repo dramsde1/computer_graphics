@@ -309,8 +309,32 @@ Image32 Image32::funFilter( void ) const
 }
 Image32 Image32::crop( int x1 , int y1 , int x2 , int y2 ) const
 {
-	Util::Throw( "Image32::crop undefined" );
-	return Image32();
+	//Util::Throw( "Image32::crop undefined" );
+
+    int r = y2 - y1;
+    int c = x2 - x1;
+    double red = 0;
+    double green = 0;
+    double blue = 0;
+    Image32* img = new Image32();
+    (*img).setSize(r, c);
+    for (int i = 0; i < r; i++ ) {
+        for (int j = 0; j < c; j++) {
+
+            red = (double)(*this)(i,j).r;
+            blue = (double)(*this)(i,j).b;
+            green = (double)(*this)(i,j).g;
+
+            (*img)(i,j).r = (unsigned char)red;
+            (*img)(i,j).g = (unsigned char)green;
+            (*img)(i,j).b = (unsigned char)blue;
+        }    
+    }
+
+
+	return (*img);
+
+
 }
 
 Pixel32 Image32::nearestSample( float x , float y ) const
