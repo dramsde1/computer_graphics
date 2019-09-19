@@ -33,15 +33,31 @@ Image32 Image32::addRandomNoise( float noise ) const
     int c = (*this).height();
     Image32* img = new Image32();
     (*img).setSize(r, c);
-    
+
+    float randomNoise = 0;
+    float range = 2 * noise;
     double red = 0;
     double green = 0;
     double blue = 0;
+    int pixelAdd = 0;
 
     for (int i = 0; i < r; i++) {
        for (int j = 0; j < c; j++) {
           
+          randomNoise = rand()*range-noise;
 
+          pixelAdd = rand();
+
+          if (pixelAdd % 4 == 0) {
+              red = (float)(*this)(i,j).r * (float)randomNoise;
+              blue = (float)(*this)(i,j).b * (float)randomNoise;
+              green = (float)(*this)(i,j).g * (float)randomNoise;
+          }
+          else {
+              red = (double)(*this)(i,j).r;
+              blue = (double)(*this)(i,j).b;
+              green = (double)(*this)(i,j).g;
+          }
 
           (*img)(i,j).r = (unsigned char)red;
           (*img)(i,j).g = (unsigned char)green;
