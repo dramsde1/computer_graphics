@@ -6,6 +6,8 @@
 #include <cmath>
 #include <vector>
 #include <numeric>
+#include <random>
+
 using std::iota;
 using std::round;
 using std::pow;
@@ -254,10 +256,59 @@ Image32 Image32::quantize( int bits ) const
 }
 
 Image32 Image32::randomDither( int bits ) const
+
 {
-	Util::Throw( "Image32::randomDither undefined" );
-	return Image32();
+	//Util::Throw( "Image32::randomDither undefined" );
+
+    int r = (*this).width();
+    int c = (*this).height();
+    double red = 0;
+    double green = 0;
+    double blue = 0;
+    double randomNoise = 0;
+    double addedNoise = 0;
+    Image32* img = new Image32();
+    (*img).setSize(r, c);
+    for (int i = 0; i < r; i++ ) {
+        for (int j = 0; j < c; j++) {
+
+            red = (double)(*this)(i,j).r;
+            green = (double)(*this)(i,j).g;
+            blue = (double)(*this)(i,j).b;
+
+            red = red / 255;
+            blue = blue / 255;
+            green = green / 255;
+
+            std::random_device rd; // get random # from hardware
+            std::mt19937 eng(rd()); // seed the generator
+            std::uniform_real_distribution<> distr(0, pow(2, bits)); //get range
+            randomNoise = (double)distr(eng);
+            addedNoise = (double)(randomNoise / pow(2, bits));
+
+            red = (double)floor(red * pow(2, bits));
+            red += addedNoise;
+            blue = (double)floor(blue * pow(2, bits));
+            blue += addedNoise;
+            green = (double)floor(green * pow(2, bits));
+            green += addedNoise;
+
+            red = (double)(red / (pow(2, bits) - 1));
+            blue = (double)(blue / (pow(2, bits) - 1));
+            green = (double)(green / (pow(2, bits) - 1));
+
+            red = boundary(red * 255);
+            blue = boundary(blue * 255);
+            green = boundary(green * 255);
+
+            (*img)(i,j).r = (unsigned char)red;
+            (*img)(i,j).g = (unsigned char)green;
+            (*img)(i,j).b = (unsigned char)blue;
+        }    
+    }
+	return (*img);
 }
+
 Image32 Image32::orderedDither2X2( int bits ) const
 {
 	Util::Throw( "Image32::orderedDither2x2 undefined" );
