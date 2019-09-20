@@ -241,9 +241,9 @@ Image32 Image32::quantize( int bits ) const
             blue = (double)(blue / (pow(2, bits) - 1));
             green = (double)(green / (pow(2, bits) - 1));
 
-            red = red * 255;
-            blue = blue * 255;
-            green = green * 255;
+            red = boundary(red * 255);
+            blue = boundary(blue * 255);
+            green = boundary(green * 255);
 
 
             (*img)(i,j).r = (unsigned char)red;
