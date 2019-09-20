@@ -15,6 +15,7 @@ using std::cout;
 using std::endl;
 using std::vector;
 using std::floor;
+using std::ceil;
 ////////////////////////////
 // Image processing stuff //
 ////////////////////////////
@@ -309,10 +310,85 @@ Image32 Image32::randomDither( int bits ) const
 	return (*img);
 }
 
+double roundDecide(double e, double roundVal, double c) {
+    if (e > roundVal) {
+        return ceil(c);
+    }
+    else {
+        return floor(c);
+    }
+}
+
 Image32 Image32::orderedDither2X2( int bits ) const
 {
-	Util::Throw( "Image32::orderedDither2x2 undefined" );
-	return Image32();
+	//Util::Throw( "Image32::orderedDither2x2 undefined" );
+
+    int r = (*this).width();
+    int c = (*this).height();
+    double red = 0;
+    double green = 0;
+    double blue = 0;
+    double redE = 0;
+    double greenE = 0;
+    double blueE = 0;
+    double d2[2][2] = {{1,3}, {4,2}};
+    int x = 0;
+    int y = 0;
+    double roundVal;
+
+
+    Image32* img = new Image32();
+    (*img).setSize(r, c);
+
+    for (int i = 0; i < r; i++ ) {
+        for (int j = 0; j < c; j++) {
+
+            x = i % 2; //x is MATRIX index
+            y = j % 2; //y is MATRIX index
+
+            red = (double)(*this)(i,j).r;
+            green = (double)(*this)(i,j).g;
+            blue = (double)(*this)(i,j).b;
+
+            red = red / 255;
+            blue = blue / 255;
+            green = green / 255;
+            // do all the math stuff after
+            
+
+            red = (double)(red * (pow(2, bits) - 1)); //c
+            redE = (double)(red - floor(red)); //e
+            green = (double)(green * (pow(2, bits) - 1)); //c
+            greenE = (double)(green - floor(green)); //e
+            blue = (double)(blue * (pow(2, bits) - 1)); //c
+            blueE = (double)(blue - floor(blue)); //e
+
+            //right side of the inequality
+            roundVal = (double)(d2[x][y] / 5);
+
+            //round up or down
+            red = roundDecide(redE, roundVal, red);
+            green = roundDecide(greenE, roundVal, green);
+            blue = roundDecide(blueE, roundVal, blue);
+
+
+            //do all the math stuff above
+            red = (double)(red / (pow(2, bits) - 1));
+            blue = (double)(blue / (pow(2, bits) - 1));
+            green = (double)(green / (pow(2, bits) - 1));
+
+            red = boundary(red * 255);
+            blue = boundary(blue * 255);
+            green = boundary(green * 255);
+
+
+            (*img)(i,j).r = (unsigned char)red;
+            (*img)(i,j).g = (unsigned char)green;
+            (*img)(i,j).b = (unsigned char)blue;
+        }        
+    }
+
+	return (*img);
 }
 
 Image32 Image32::floydSteinbergDither( int bits ) const
