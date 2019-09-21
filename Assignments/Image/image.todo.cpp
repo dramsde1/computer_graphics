@@ -391,10 +391,202 @@ Image32 Image32::orderedDither2X2( int bits ) const
 	return (*img);
 }
 
+
 Image32 Image32::floydSteinbergDither( int bits ) const
 {
-	Util::Throw( "Image32::floydSteinbergDither undefined" );
-	return Image32();
+	//Util::Throw( "Image32::floydSteinbergDither undefined" );
+
+    int r = (*this).width();
+    int c = (*this).height();
+    double red = 0;
+    double green = 0;
+    double blue = 0;
+    double red1 = 0;
+    double green1 = 0;
+    double blue1 = 0;
+    double errorRed = 0;
+    double errorBlue = 0;
+    double errorGreen = 0;
+    double redDest = 0;
+    double blueDest = 0;
+    double greenDest = 0;
+    double alpha = 7/16;
+    double Beta = 3/16;
+    double gamma = 5/16;
+    double delta = 1/16;
+    bool or1 = false;
+    bool or2 = false;
+    bool or3 = false;
+    bool or4 = false;
+    double test = 0;
+
+        
+    Image32* img = new Image32();
+    (*img).setSize(r, c);
+
+    for (int j = 0; j < c; j++ ) {
+        for (int i = 0; i < r; i++) {
+
+            //boundary check 1
+            try {
+                test = (double)(*this)(i, j + 1).r;
+            }
+            catch(...) {
+                cout << "in catch" << endl;
+                or1 = true;
+            }
+            //boundary check 2
+
+            try {
+                test = (double)(*this)(i + 1, j - 1).r;
+            }
+            catch(...) {
+                or2 = true;
+                cout << "in cathc2" << endl;
+            }
+
+            //boundary check 3
+            try {
+                test = (double)(*this)(i + 1,j).r;
+            }
+            catch(...) {
+                or3 = true;
+                cout << "in cathc3" << endl;
+            }
+
+            //boundary check 4
+            try {
+                test = (double)(*this)(i + 1, j + 1).r;
+            }
+            catch(...) {
+                or4 = true;
+                cout << "in cathc3" << endl;
+            }
+
+            //end boundary checking
+            cout << "here" << endl;
+            red = (double)(*this)(i,j).r;
+            green = (double)(*this)(i,j).g;
+            blue = (double)(*this)(i,j).b;
+
+            red = red / 255;
+            blue = blue / 255;
+            green = green / 255;
+
+
+            redDest = (double)floor(red * pow(2, bits));
+            blueDest = (double)floor(blue * pow(2, bits));
+            greenDest = (double)floor(green * pow(2, bits));
+
+            //red is source
+            errorRed = red - redDest; 
+            errorGreen = green - greenDest; 
+            errorBlue = blue - blueDest; 
+
+            cout << "here2" << endl;
+            //step one
+            if (!or1) {
+            
+                red1 = (double)(*this)(i,j + 1).r + (alpha * errorRed);
+                green1 = (double)(*this)(i,j + 1).g + (alpha * errorGreen);
+                blue1 = (double)(*this)(i,j + 1).b + (alpha * errorBlue);
+
+                red1 = (double)(red1 / pow(2, bits) - 1);
+                green1 = (double)(green1 / pow(2, bits) - 1);
+                blue1 = (double)(blue1 / pow(2, bits) - 1);
+
+                red1 = boundary(red1 * 255);
+                green1 = boundary(green1 * 255);
+                blue1 = boundary(blue1 * 255);
+
+                (*img)(i, j + 1).r = (unsigned char)red1;
+                (*img)(i, j + 1).g = (unsigned char)green1;
+                (*img)(i, j + 1).b = (unsigned char)blue1;
+            }
+
+            //step two
+            if (!or2) {
+
+                cout << "here3" << endl;
+                red1 = (double)(*this)(i + 1,j - 1).r + (Beta * errorRed);
+                green1 = (double)(*this)(i + 1,j - 1).g + (Beta * errorGreen);
+                blue1 = (double)(*this)(i + 1,j - 1).b + (Beta * errorBlue);
+
+                red1 = (double)(red1 / pow(2, bits) - 1);
+                green1 = (double)(green1 / pow(2, bits) - 1);
+                blue1 = (double)(blue1 / pow(2, bits) - 1);
+
+                red1 = boundary(red1 * 255);
+                green1 = boundary(green1 * 255);
+                blue1 = boundary(blue1 * 255);
+
+                (*img)(i + 1, j - 1).r = (unsigned char)red1;
+                (*img)(i + 1, j - 1).g = (unsigned char)green1;
+                (*img)(i + 1, j - 1).b = (unsigned char)blue1;
+
+            }
+            //step three
+            if (!or3) {
+
+                cout << "here3" << endl;
+                red1 = (double)(*this)(i + 1,j).r + (gamma * errorRed);
+                green1 = (double)(*this)(i + 1,j).g + (gamma * errorGreen);
+                blue1 = (double)(*this)(i + 1,j).b + (gamma * errorBlue);
+
+                cout << "here3.2" << endl;
+                red1 = (double)(red1 / pow(2, bits) - 1);
+                green1 = (double)(green1 / pow(2, bits) - 1);
+                blue1 = (double)(blue1 / pow(2, bits) - 1);
+
+                red1 = boundary(red1 * 255);
+                green1 = boundary(green1 * 255);
+                blue1 = boundary(blue1 * 255);
+                cout << "here3.5" <<endl;
+                (*img)(i + 1,j).r = (unsigned char)red1;
+                (*img)(i + 1,j).g = (unsigned char)green1;
+                (*img)(i + 1,j).b = (unsigned char)blue1;
+
+            }
+            //step four
+            if (!or4) {
+
+                cout << "here4" << endl;
+                red1 = (double)(*this)(i + 1,j + 1).r + (delta * errorRed);
+                green1 = (double)(*this)(i + 1,j + 1).g + (delta * errorGreen);
+                blue1 = (double)(*this)(i + 1,j + 1).b + (delta * errorBlue);
+
+                red1 = (double)(red1 / pow(2, bits) - 1);
+                green1 = (double)(green1 / pow(2, bits) - 1);
+                blue1 = (double)(blue1 / pow(2, bits) - 1);
+
+                red1 = boundary(red1 * 255);
+                green1 = boundary(green1 * 255);
+                blue1 = boundary(blue1 * 255);
+
+                (*img)(i + 1,j + 1).r = (unsigned char)red1;
+                (*img)(i + 1,j + 1).g = (unsigned char)green1;
+                (*img)(i + 1,j + 1).b = (unsigned char)blue1;
+
+            }
+
+            cout << "here5" << endl;
+            // below is for the pixel your on
+            red = (double)(red / (pow(2, bits) - 1));
+            blue = (double)(blue / (pow(2, bits) - 1));
+            green = (double)(green / (pow(2, bits) - 1));
+
+            red = boundary(red * 255);
+            blue = boundary(blue * 255);
+            green = boundary(green * 255);
+
+            (*img)(i,j).r = (unsigned char)red;
+            (*img)(i,j).g = (unsigned char)green;
+            (*img)(i,j).b = (unsigned char)blue;
+        }        
+    }
+
+	return (*img);
+     
 }
 
 Image32 Image32::blur3X3( void ) const
