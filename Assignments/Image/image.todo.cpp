@@ -629,33 +629,25 @@ void getMask(double sig, int n, double **arr){
     }
 }
 
-void  multiply(int size, const Image32 * img, int n, double **mask, int i, int j, Image32 * converted, int rows, int cols) {
+void  multiply(int size, const Image32 * img, double **mask, int i, int j, Image32 * converted, int rows, int cols) {
     int inbounds_x = i - (size/2);
     int inbounds_y = j - (size/2);
     double redTotal = 0;
     double greenTotal = 0;
     double blueTotal = 0;
     double total = 0;       
-    //int counter = 0;
     for (int r  = 0; r < size; r++){
         for (int c = 0; c < size; c++) {
             if(r+inbounds_x >= 0 && r+inbounds_x < rows && c+inbounds_y >= 0 && c+inbounds_y < cols){
-                //cout << "in1" << endl;
                 redTotal += (*img)((r+inbounds_x), (c+inbounds_y)).r * mask[r][c];
-                //cout << "in2" << endl;
                 greenTotal += (*img)((r+inbounds_x), (c+inbounds_y)).g * mask[r][c];
-                //cout << "in3" << endl;
                 blueTotal += (*img)((r+inbounds_x), (c+inbounds_y)).b * mask[r][c];
-                //cout << "in4" << endl;
                 total += mask[r][c];
-                //cout << "in5" << endl;
-                //counter++;
-                //cout << counter << endl;
             } 
         }
     }
 
-    //normalization
+    //dont forget to normalize everything
     (*converted)(i, j).r = redTotal / total;
     (*converted)(i, j).g = greenTotal / total;
     (*converted)(i, j).b = blueTotal / total;
@@ -668,18 +660,11 @@ Image32 Image32::blur3X3( void ) const
     //n*n mask n/2 = sigma
     double sig = 1.5;
     double **mask = new double*[n];
-
-    //cout << "hey3" << endl;
-    //mask = new double*[n];
     for (int i = 0; i < n; i++) {
         mask[i] = new double[n];
     }
-    //cout << "hey4" << endl;
-    //int size = (int)(sig * 10);
     int size = n;
     getMask(sig,n,mask);
-
-    //cout << "hey5" << endl;
     int r = (*this).width();
     int c = (*this).height();
     Image32* img = new Image32();
@@ -687,20 +672,65 @@ Image32 Image32::blur3X3( void ) const
 
     for (int i = 0; i < r; i++ ) {
         for (int j = 0; j < c; j++) {
-            //cout << "hey6" << endl;
-            multiply(size, this, n, mask, i, j, img, r, c);
-            //cout << "hey7" << endl;
+            multiply(size, this, mask, i, j, img, r, c);
         }
     }
 
-    //cout << "hey8" << endl;
 	return (*img);
+}
+
+void  edgeCreater(int size, const Image32 * img, double **mask, int i, int j, Image32 * converted, int rows, int cols) {
+    int inbounds_x = i - (size/2);
+    int inbounds_y = j - (size/2);
+    double redTotal = 0;
+    double greenTotal = 0;
+    double blueTotal = 0;
+    for (int r  = 0; r < size; r++){
+        for (int c = 0; c < size; c++) {
+            if(r+inbounds_x >= 0 && r+inbounds_x < rows && c+inbounds_y >= 0 && c+inbounds_y < cols){
+                redTotal += (*img)((r+inbounds_x), (c+inbounds_y)).r * mask[r][c];
+                greenTotal += (*img)((r+inbounds_x), (c+inbounds_y)).g * mask[r][c];
+                blueTotal += (*img)((r+inbounds_x), (c+inbounds_y)).b * mask[r][c];
+            } 
+        }
+    }
+
+    //dont forget to normalize everything
+    (*converted)(i, j).r = boundary(redTotal);
+    (*converted)(i, j).g = boundary(greenTotal);
+    (*converted)(i, j).b = boundary(blueTotal);
 }
 
 Image32 Image32::edgeDetect3X3( void ) const
 {
-	Util::Throw( "Image32::edgeDetect3X3 undefined" );
-	return Image32();
+	//Util::Throw( "Image32::edgeDetect3X3 undefined" );
+    int n = 3;
+    double **mask = new double*[n];
+    for (int i = 0; i < n; i++) {
+        mask[i] = new double[n];
+    }
+    //fill the mask
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            mask[i][j] = -0.125;
+        }
+    }
+    //middle value
+    mask[1][1] = 1.0;
+
+    int r = (*this).width();
+    int c = (*this).height();
+
+    Image32* img = new Image32();
+    (*img).setSize(r, c);
+
+    for (int i = 0; i < r; i++ ) {
+        for (int j = 0; j < c; j++) {
+            edgeCreater(n, this, mask, i, j, img, r, c);
+        }
+    }
+
+	return (*img);
 }
 Image32 Image32::scaleNearest( float scaleFactor ) const
 {
