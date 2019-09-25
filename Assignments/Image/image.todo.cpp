@@ -94,6 +94,7 @@ double boundary2(double rgb) {
     return rgb;
 }
 
+
 Image32 Image32::brighten( float brightness ) const
 
 {
@@ -695,7 +696,6 @@ void  edgeCreater(int size, const Image32 * img, double **mask, int i, int j, Im
         }
     }
 
-    //dont forget to normalize everything
     (*converted)(i, j).r = boundary(redTotal);
     (*converted)(i, j).g = boundary(greenTotal);
     (*converted)(i, j).b = boundary(blueTotal);
@@ -712,11 +712,11 @@ Image32 Image32::edgeDetect3X3( void ) const
     //fill the mask
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            mask[i][j] = -0.125;
+            mask[i][j] = -1.0;
         }
     }
     //middle value
-    mask[1][1] = 1.0;
+    mask[1][1] = 8;
 
     int r = (*this).width();
     int c = (*this).height();
@@ -732,6 +732,7 @@ Image32 Image32::edgeDetect3X3( void ) const
 
 	return (*img);
 }
+
 Image32 Image32::scaleNearest( float scaleFactor ) const
 {
 	Util::Throw( "Image32::scaleNearest undefined" );
@@ -827,9 +828,12 @@ Image32 Image32::crop( int x1 , int y1 , int x2 , int y2 ) const
 
 Pixel32 Image32::nearestSample( float x , float y ) const
 {
-	Util::Throw( "Image32::nearestSample undefined" );
+    //Return the value of the pixel closest to the position (x,y)
+
+
 	return Pixel32();
 }
+
 Pixel32 Image32::bilinearSample( float x , float y ) const
 {
 	Util::Throw( "Image32::bilinearSample undefined" );
