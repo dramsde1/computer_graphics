@@ -403,6 +403,12 @@ Image32 Image32::orderedDither2X2( int bits ) const
 }
 
 
+double floydQuantize(double pixelVal, int bits) {
+    pixelVal = pixelVal / 255;
+    pixelVal = (double)floor(pixelVal * pow(2, bits));
+    return (double)(pixelVal / (pow(2, bits) - 1));
+}
+
 Image32 Image32::floydSteinbergDither( int bits ) const
 {
 	//Util::Throw( "Image32::floydSteinbergDither undefined" );
@@ -412,199 +418,68 @@ Image32 Image32::floydSteinbergDither( int bits ) const
     double red = 0;
     double green = 0;
     double blue = 0;
-    double red1 = 0;
-    double green1 = 0;
-    double blue1 = 0;
-    double errorRed = 0;
-    double errorBlue = 0;
-    double errorGreen = 0;
-    double redDest = 0;
-    double blueDest = 0;
-    double greenDest = 0;
-    double alpha = 0.4375;
-    double Beta = 0.1875;
-    double gamma = 0.3125;
-    double delta = 0.0625;
-    bool or1 = false;
-    bool or2 = false;
-    bool or3 = false;
-    bool or4 = false;
-    double test = 0;
 
-        
+    double _alpha = .4375;
+    double _beta = .1875;
+    double _gamma = .3125;
+    double _delta = .0625;
+
+    double r_error = 0;
+    double g_error = 0;
+    double b_error = 0;
+
     Image32* img = new Image32();
     (*img).setSize(r, c);
 
-    for (int j = 0; j < c; j++ ) {
-        for (int i = 0; i < r; i++) {
+    for (int i = 0; i < r; i++ ) {
+        for (int j = 0; j < c; j++) {
 
-            //boundary check 1
-            try {
-                test = (double)(*this)(i, j + 1).r;
-            }
-            catch(...) {
-                or1 = true;
-            }
-            //boundary check 2
+            //these are your dests  
+            red = floydQuantize((double)(*this)(i,j).r, bits);
+            green = floydQuantize((double)(*this)(i,j).g, bits);
+            blue = floydQuantize((double)(*this)(i,j).b, bits);
 
-            try {
-                test = (double)(*this)(i + 1, j - 1).r;
-            }
-            catch(...) {
-                or2 = true;
-            }
+            //sourece - dest
+            r_error = (double)(*this)(i,j).r - red;
+            g_error = (double)(*this)(i,j).g - green;
+            b_error = (double)(*this)(i,j).b - blue;
 
-            //boundary check 3
-            try {
-                test = (double)(*this)(i + 1,j).r;
-            }
-            catch(...) {
-                or3 = true;
+            //alpha error
+            if (j + 1 < c) {
+                cout << "here" << endl;
+                (*img)(i, j + 1).r = (unsigned char)boundary(((*img)(i, j + 1).r + (_alpha * r_error)));
+                (*img)(i, j + 1).g = (unsigned char)boundary(((*img)(i, j + 1).g + (_alpha * g_error)));
+                (*img)(i, j + 1).b = (unsigned char)boundary(((*img)(i, j + 1).b + (_alpha * b_error)));
             }
 
-            //boundary check 4
-            try {
-                test = (double)(*this)(i + 1, j + 1).r;
-            }
-            catch(...) {
-                or4 = true;
-            }
-
-            //end boundary checking
-            red = (double)(*this)(i,j).r;
-            green = (double)(*this)(i,j).g;
-            blue = (double)(*this)(i,j).b;
-
-            red = red / 255;
-            blue = blue / 255;
-            green = green / 255;
-
-
-            redDest = boundary2((double)floor(red * pow(2, bits)));
-            blueDest = boundary2((double)floor(blue * pow(2, bits)));
-            greenDest = boundary2((double)floor(green * pow(2, bits)));
-
-            //redDest = (double)(redDest / (pow(2, bits) - 1));
-            //blueDest = (double)(blueDest / (pow(2, bits) - 1));
-            //greenDest = (double)(greenDest / (pow(2, bits) - 1));
-
-            //red is source
-            errorRed = abs(red - redDest);
-            errorGreen = abs(green - greenDest); 
-            errorBlue = abs(blue - blueDest); 
-            //step one
-            if (!or1) {
-            
-                red1 = (double)(*this)(i,j + 1).r / 255;
-                //red1 = (double)(red1 / (pow(2, bits) - 1));
-                cout << "alpha" << endl;
-                cout << alpha << endl;
-                cout << "errorRed" << endl;
-                cout << errorRed << endl;
-                red1 += (alpha * errorRed);
-                cout << "alpha times" << endl;
-                cout << alpha * errorRed << endl;
-                green1 = (double)(*this)(i,j + 1).g / 255;
-                //green1 = (double)(green1 / (pow(2, bits) - 1));
-                green1 += (alpha * errorGreen);
-                blue1 = (double)(*this)(i,j + 1).b / 255;
-                //blue1 = (double)(blue1 / (pow(2, bits) - 1));
-                blue1 += (alpha * errorBlue);
-
-                red1 = boundary(red1 * 255);
-                green1 = boundary(green1 * 255);
-                blue1 = boundary(blue1 * 255);
-
-                cout << "red1" << endl;
-                cout << red1 << endl;
-                cout<< "og" << endl;
-                cout << (double)(*this)(i, j + 1).r << endl;
-
-                (*img)(i, j + 1).r = (unsigned char)red1;
-                (*img)(i, j + 1).g = (unsigned char)green1;
-                (*img)(i, j + 1).b = (unsigned char)blue1;
+            //beta error
+            if (i + 1 < r && j - 1 > 0) {
+                cout << "here1" << endl;
+                (*img)(i + 1, j - 1).r = (unsigned char)boundary(((*img)(i + 1, j - 1).r + (_beta * r_error)));
+                (*img)(i + 1, j - 1).g = (unsigned char)boundary(((*img)(i + 1, j - 1).g + (_beta * g_error)));
+                (*img)(i + 1, j - 1).b = (unsigned char)boundary(((*img)(i + 1, j - 1).b + (_beta * b_error)));
             }
 
-            //step two
-            if (!or2) {
-
-                red1 = (double)(*this)(i + 1,j - 1).r / 255;
-                //red1 = (double)(red1 / (pow(2, bits) - 1));
-                red1 += (Beta * errorRed);
-                green1 = (double)(*this)(i + 1,j - 1).g / 255;
-                //green1 = (double)(green1 / (pow(2, bits) - 1));
-                green1 += (Beta * errorGreen);
-                blue1 = (double)(*this)(i + 1,j - 1).b / 255;
-                //blue1 = (double)(blue1 / (pow(2, bits) - 1));
-                blue1 += (Beta * errorBlue);
-
-                red1 = boundary(red1 * 255);
-                green1 = boundary(green1 * 255);
-                blue1 = boundary(blue1 * 255);
-
-                (*img)(i + 1, j - 1).r = (unsigned char)red1;
-                (*img)(i + 1, j - 1).g = (unsigned char)green1;
-                (*img)(i + 1, j - 1).b = (unsigned char)blue1;
-
-            }
-            //step three
-            if (!or3) {
-
-
-                red1 = (double)(*this)(i + 1,j).r / 255;
-                //red1 = (double)(red1 / (pow(2, bits) - 1));
-                red1 += (gamma * errorRed);
-                green1 = (double)(*this)(i + 1,j).g / 255;
-                //green1 = (double)(green1 / (pow(2, bits) - 1));
-                green1 += (gamma * errorGreen);
-                blue1 = (double)(*this)(i + 1,j).b / 255;
-                //blue1 = (double)(blue1 / (pow(2, bits) - 1));
-                blue1 += (gamma * errorBlue);
-
-
-                red1 = boundary(red1 * 255);
-                green1 = boundary(green1 * 255);
-                blue1 = boundary(blue1 * 255);
-
-                (*img)(i + 1,j).r = (unsigned char)red1;
-                (*img)(i + 1,j).g = (unsigned char)green1;
-                (*img)(i + 1,j).b = (unsigned char)blue1;
-
-            }
-            //step four
-            if (!or4) {
-
-                red1 = (double)(*this)(i + 1,j + 1).r / 255;
-                //red1 = (double)(red1 / (pow(2, bits) - 1));
-                red1 += (delta * errorRed);
-                green1 = (double)(*this)(i + 1,j + 1).g / 255;
-                //green1 = (double)(green1 / (pow(2, bits) - 1));
-                green1 += (delta * errorGreen);
-                blue1 = (double)(*this)(i + 1,j + 1).b / 255;
-                //blue1 = (double)(blue1 / (pow(2, bits) - 1));
-                blue1 += (delta * errorBlue);
-
-
-                red1 = boundary(red1 * 255);
-                green1 = boundary(green1 * 255);
-                blue1 = boundary(blue1 * 255);
-
-                (*img)(i + 1,j + 1).r = (unsigned char)red1;
-                (*img)(i + 1,j + 1).g = (unsigned char)green1;
-                (*img)(i + 1,j + 1).b = (unsigned char)blue1;
-
+            //gamma error
+            if (i + 1 < r) {
+                cout << "here2" << endl;
+                (*img)(i + 1, j).r = (unsigned char)boundary(((*img)(i + 1, j).r + (_gamma * r_error)));
+                (*img)(i + 1, j).g = (unsigned char)boundary(((*img)(i + 1, j).g + (_gamma * g_error)));
+                (*img)(i + 1, j).b = (unsigned char)boundary(((*img)(i + 1, j).b + (_gamma * b_error)));
             }
 
-            // below is for the pixel your on
-            or1 = false;
-            or2 = false;
-            or3 = false;
-            or4 = false;
+            //delta error
+            if (i + 1 < r && j + 1 < c) {
+                cout << "here3" << endl;
+                (*img)(i + 1, j + 1).r = (unsigned char)boundary(((*img)(i + 1, j + 1).r + (_delta * r_error)));
+                (*img)(i + 1, j + 1).g = (unsigned char)boundary(((*img)(i + 1, j + 1).g + (_delta * g_error)));
+                (*img)(i + 1, j + 1).b = (unsigned char)boundary(((*img)(i + 1, j + 1).b + (_delta * b_error)));
+            }
+
         }        
     }
 
 	return (*img);
-     
 }
 
 //create a filter first 
@@ -735,14 +610,59 @@ Image32 Image32::edgeDetect3X3( void ) const
 
 Image32 Image32::scaleNearest( float scaleFactor ) const
 {
-	Util::Throw( "Image32::scaleNearest undefined" );
-	return Image32();
+	//Util::Throw( "Image32::scaleNearest undefined" );
+    int rOg = (*this).width();
+    int cOg = (*this).height();
+    int r = rOg * scaleFactor;
+    int c = cOg * scaleFactor;
+    int iu = 0;
+    int iv = 0;
+
+    Image32* img = new Image32();
+    (*img).setSize(r, c);
+    
+
+    for (int i = 0; i < r; i++) {
+       for (int j = 0; j < c; j++) {
+            iu = floor((float)(i/scaleFactor) + 0.5);
+            iv = floor((float)(j/scaleFactor) + 0.5);
+            if (iu < rOg && iv < cOg) {
+                (*img)(i,j) = nearestSample((float)(i / scaleFactor), (float)(j / scaleFactor));
+            }
+       }
+    }
+
+	return (*img);
 }
 
 Image32 Image32::scaleBilinear( float scaleFactor ) const
 {
-	Util::Throw( "Image32::scaleBilinear undefined" );
-	return Image32();
+    int rOg = (*this).width();
+    int cOg = (*this).height();
+    int r = rOg * scaleFactor;
+    int c = cOg * scaleFactor;
+    double u1 = 0;
+    double u2 = 0;
+    double v1 = 0;
+    double v2 = 0;
+
+    Image32* img = new Image32();
+    (*img).setSize(r, c);
+    
+
+    for (int i = 0; i < r; i++) {
+       for (int j = 0; j < c; j++) {
+            u1 = (double)floor((float)(i / scaleFactor));
+            u2 = u1 + 1;
+            v1 = (double)floor((float)(j / scaleFactor));
+            v2 = v1 + 1;
+            if (u1 < rOg && v1 < cOg && u2 < rOg && v2 < cOg) {
+                (*img)(i,j) = bilinearSample((float)(i / scaleFactor), (float)(j / scaleFactor));
+            }
+       }
+    }
+
+	return (*img);
 }
 
 Image32 Image32::scaleGaussian( float scaleFactor ) const
@@ -829,16 +749,57 @@ Image32 Image32::crop( int x1 , int y1 , int x2 , int y2 ) const
 Pixel32 Image32::nearestSample( float x , float y ) const
 {
     //Return the value of the pixel closest to the position (x,y)
-
-
-	return Pixel32();
+    int iu = floor(x + 0.5);
+    int iv = floor(y + 0.5);
+    return (*this)(iu, iv);
 }
 
 Pixel32 Image32::bilinearSample( float x , float y ) const
 {
-	Util::Throw( "Image32::bilinearSample undefined" );
-	return Pixel32();
+	//Util::Throw( "Image32::bilinearSample undefined" );
+    double u1 = 0;
+    double u2 = 0;
+    double v1 = 0;
+    double v2 = 0;
+    double du = 0;
+    double dv = 0;
+    double aR = 0;
+    double aG = 0;
+    double aB = 0;
+    double bR = 0;
+    double bG = 0;
+    double bB = 0;
+
+    int r = (*this).width();
+    int c = (*this).height();
+
+    Pixel32 * pixel = new Pixel32();
+
+    u1 = (double)floor(x);
+    u2 = u1 + 1;
+    v1 = (double)floor(y);
+    v2 = v1 + 1;
+    du = x - u1;
+
+
+    aR = ((*this)((int)u1, (int)v1).r * (1 - du)) + ((*this)((int)u2, (int)v1).r * du);
+    aG = ((*this)((int)u1, (int)v1).g * (1 - du)) + ((*this)((int)u2, (int)v1).g * du);
+    aB = ((*this)((int)u1, (int)v1).b * (1 - du)) + ((*this)((int)u2, (int)v1).b * du);
+
+
+    bR = ((*this)((int)u1, (int)v2).r * (1 - du)) + ((*this)((int)u2, (int)v2).r * du);
+    bG = ((*this)((int)u1, (int)v2).g * (1 - du)) + ((*this)((int)u2, (int)v2).g * du);
+    bB = ((*this)((int)u1, (int)v2).b * (1 - du)) + ((*this)((int)u2, (int)v2).b * du);
+
+    dv = y - v1;
+
+    (*pixel).r = (aR * (1 - dv)) + (bR * dv);
+    (*pixel).g = (aG * (1 - dv)) + (bG * dv);
+    (*pixel).b = (aB * (1 - dv)) + (bB * dv);
+
+	return (*pixel);
 }
+
 Pixel32 Image32::gaussianSample( float x , float y , float variance , float radius ) const
 {
 	Util::Throw( "Image32::gaussianSample undefined" );
