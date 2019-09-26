@@ -665,15 +665,40 @@ Image32 Image32::scaleBilinear( float scaleFactor ) const
 	return (*img);
 }
 
+//rotate gaussian use .25
+
 Image32 Image32::scaleGaussian( float scaleFactor ) const
 {
-	Util::Throw( "Image32::scaleGaussian undefined" );
-	return Image32();
+    int rOg = (*this).width();
+    int cOg = (*this).height();
+    int r = rOg * scaleFactor;
+    int c = cOg * scaleFactor;
+    float variance = (float)pow((float)(.5 / scaleFactor), 2);
+    float radius = 1 /scaleFactor;
+    int iu = 0;
+    int iv = 0;
+
+    Image32* img = new Image32();
+    (*img).setSize(r, c);
+
+    for (int i = 0; i < r; i++) {
+       for (int j = 0; j < c; j++) {
+            iu = floor((float)(i/scaleFactor));
+            iv = floor((float)(j/scaleFactor));
+            if (iu < rOg && iv < cOg) {
+                (*img)(i,j) = gaussianSample((float)(i / scaleFactor), (float)(j / scaleFactor), variance, radius);
+            }
+       }
+    }
+
+	return (*img);
 }
 
+//track the conrners
 Image32 Image32::rotateNearest( float angle ) const
 {
-	Util::Throw( "Image32::rotateNearest undefined" );
+	//Util::Throw( "Image32::rotateNearest undefined" );
+
 	return Image32();
 }
 
@@ -691,14 +716,71 @@ Image32 Image32::rotateGaussian( float angle ) const
 
 void Image32::setAlpha( const Image32& matte )
 {
-	Util::Throw( "Image32::setAlpha undefined" );
-	return;
+	//Util::Throw( "Image32::setAlpha undefined" );
+    //set alpha to be the blue channel
+    int r = matte.width();
+    int c = matte.height();
+    
+
+    for (int i = 0; i < r; i++) {
+       for (int j = 0; j < c; j++) {
+           (*this)(i,j).a = matte(i,j).b;
+       }
+    }
 }
 
 Image32 Image32::composite( const Image32& overlay ) const
 {
-	Util::Throw( "Image32::composite undefined" );
-	return Image32();
+	//Util::Throw( "Image32::composite undefined" );
+    int r = (*this).width();
+    int c = (*this).height();
+    double opacityA = 0;
+    double rA = 0;
+    double gA = 0;
+    double bA = 0;
+
+    
+    double rB = 0;
+    double gB = 0;
+    double bB = 0;
+
+    double opacityB = 0;
+
+    double opacityOver = 0;
+
+    double rOver = 0;
+    double gOver = 0;
+    double bOver = 0;
+    
+    Image32* img = new Image32();
+    (*img).setSize(r, c);
+    (*img).setAlpha(overlay);
+
+    for (int i = 0; i < r; i++) {
+       for (int j = 0; j < c; j++) {
+           opacityA = overlay(i,j).a;
+           rA = overlay(i,j).r * overlay(i,j).a;
+           gA = overlay(i,j).g * overlay(i,j).a;
+           bA = overlay(i,j).b * overlay(i,j).a;
+
+           opacityB = (1 - overlay(i,j).a) * (*this)(i,j).a;
+
+           rB = (*this)(i,j).r * (1 - overlay(i,j).a) * (*this)(i,j).a;
+           gB = (*this)(i,j).g * (1 - overlay(i,j).a) * (*this)(i,j).a;
+           bB = (*this)(i,j).b * (1 - overlay(i,j).a) * (*this)(i,j).a;
+
+           opacityOver = overlay(i,j).a + (1 - overlay(i,j).a) * (*this)(i,j).a;
+
+           rOver = (overlay(i,j).r * overlay(i,j).a) + ((*this)(i,j).r * (1 - overlay(i,j).a) * (*this)(i,j).a);
+           gOver = (overlay(i,j).g * overlay(i,j).a) + ((*this)(i,j).g * (1 - overlay(i,j).a) * (*this)(i,j).a);
+           bOver = (overlay(i,j).b * overlay(i,j).a) + ((*this)(i,j).b * (1 - overlay(i,j).a) * (*this)(i,j).a);
+
+           (*img)(i,j).r = rOver / opacityOver;
+           (*img)(i,j).g = gOver / opacityOver;
+           (*img)(i,j).b = bOver / opacityOver;
+       }
+    }
+	return (*img);
 }
 
 Image32 Image32::CrossDissolve( const Image32& source , const Image32& destination , float blendWeight )
@@ -717,6 +799,7 @@ Image32 Image32::funFilter( void ) const
 	Util::Throw( "Image32::funFilter undefined" );
 	return Image32();
 }
+
 Image32 Image32::crop( int x1 , int y1 , int x2 , int y2 ) const
 {
 	//Util::Throw( "Image32::crop undefined" );
@@ -800,8 +883,56 @@ Pixel32 Image32::bilinearSample( float x , float y ) const
 	return (*pixel);
 }
 
+double square(double val) {
+    return val * val;
+}
+
 Pixel32 Image32::gaussianSample( float x , float y , float variance , float radius ) const
 {
-	Util::Throw( "Image32::gaussianSample undefined" );
-	return Pixel32();
+    int low_x = 0;
+    int high_x = 0;
+    int low_y = 0; 
+    int high_y = 0;
+    double red = 0;
+    double green = 0;
+    double blue = 0;
+    double total = 0;
+    double dx = 0;
+    double dy = 0;
+    double len = 0;
+    Pixel32 * p = new Pixel32();
+
+    low_x = floor((double)x - (double)radius);
+    high_x = ceil((double)x + (double)radius);
+
+    int w = high_x - low_x;
+
+    low_y = floor((double)y - (double)radius);
+    high_y = ceil((double)y + (double)radius);
+
+    int h = high_y - low_y;
+
+    //get within the radius
+    for (int i = low_x; i < high_x; i++) {
+        for (int j = low_y; j < high_y; j++) {
+            dx = (double)x - i;
+            dy = (double)y - j;
+            len = square(dx * dx + dy * dy);
+            if (len < (float)radius) {
+                float g = exp(double(-1.0 * ((dx * dx) + (dy * dy)) / (2 * ((double)variance * (double)variance))));
+                total += g;
+                red += (*this)(i,j).r * g;
+                green += (*this)(i,j).g * g;
+                blue += (*this)(i,j).b * g;
+            }
+        }
+    }
+
+    (*p).r = red / total;
+    (*p).g = green / total;
+    (*p).b = blue / total;
+
+
+
+	return (*p);
 }
