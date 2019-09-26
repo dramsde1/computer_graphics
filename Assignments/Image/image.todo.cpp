@@ -284,6 +284,12 @@ Image32 Image32::randomDither( int bits ) const
     for (int i = 0; i < r; i++ ) {
         for (int j = 0; j < c; j++) {
 
+
+            std::random_device rd; // get random # from hardware
+            std::mt19937 eng(rd()); // seed the generator
+            std::uniform_real_distribution<> distr(-1, 1); //get range
+            randomNoise = (double)distr(eng);
+
             red = (double)(*this)(i,j).r;
             green = (double)(*this)(i,j).g;
             blue = (double)(*this)(i,j).b;
@@ -292,18 +298,13 @@ Image32 Image32::randomDither( int bits ) const
             blue = blue / 255;
             green = green / 255;
 
-            std::random_device rd; // get random # from hardware
-            std::mt19937 eng(rd()); // seed the generator
-            std::uniform_real_distribution<> distr(0, pow(2, bits)); //get range
-            randomNoise = (double)distr(eng);
-            addedNoise = (double)(randomNoise / pow(2, bits));
+            red = red + (double)(randomNoise / pow(2, bits));
+            green = green + (double)(randomNoise / pow(2, bits));
+            blue = blue + (double)(randomNoise / pow(2, bits));
 
             red = (double)floor(red * pow(2, bits));
-            red += addedNoise;
             blue = (double)floor(blue * pow(2, bits));
-            blue += addedNoise;
             green = (double)floor(green * pow(2, bits));
-            green += addedNoise;
 
             red = (double)(red / (pow(2, bits) - 1));
             blue = (double)(blue / (pow(2, bits) - 1));
