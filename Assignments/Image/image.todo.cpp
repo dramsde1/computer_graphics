@@ -28,6 +28,17 @@ Pixel32::Pixel32( const Pixel& p )
 	Util::Throw( "Pixel32::Pixel32 undefined" );
 }
 
+//helper function for brighten
+double boundary(double rgb) {
+    if (rgb < 0) {
+        rgb = 0;
+    }
+    if (rgb > 255) {
+        rgb = 255;
+    }
+    return rgb;
+}
+
 Image32 Image32::addRandomNoise( float noise ) const
 {
 	//Util::Throw( "Image32::addRandomNoise undefined" );
@@ -38,23 +49,27 @@ Image32 Image32::addRandomNoise( float noise ) const
     (*img).setSize(r, c);
 
     float randomNoise = 0;
-    float range = 2 * noise;
+    float randomNumber = 0;
+    float range = 0;
     double red = 0;
     double green = 0;
     double blue = 0;
     int pixelAdd = 0;
+    std::random_device rd; // get random # from hardware
+    std::mt19937 eng(rd()); // seed the generator
+    std::uniform_real_distribution<> distr(-120, 120); //get range
 
     for (int i = 0; i < r; i++) {
        for (int j = 0; j < c; j++) {
           
-          randomNoise = rand()*range-noise;
+          randomNumber = (double)distr(eng);
+          randomNoise = randomNumber * noise;
 
           pixelAdd = rand();
-
-          if (pixelAdd % 4 == 0) {
-              red = (float)(*this)(i,j).r * (float)randomNoise;
-              blue = (float)(*this)(i,j).b * (float)randomNoise;
-              green = (float)(*this)(i,j).g * (float)randomNoise;
+          if (pixelAdd % 4) {
+              red = (float)boundary((*this)(i,j).r + (float)randomNoise);
+              blue = (float)boundary((*this)(i,j).b + (float)randomNoise);
+              green = (float)boundary((*this)(i,j).g + (float)randomNoise);
           }
           else {
               red = (double)(*this)(i,j).r;
@@ -73,16 +88,6 @@ Image32 Image32::addRandomNoise( float noise ) const
 	return (*img);
 }
 
-//helper function for brighten
-double boundary(double rgb) {
-    if (rgb < 0) {
-        rgb = 0;
-    }
-    if (rgb > 255) {
-        rgb = 255;
-    }
-    return rgb;
-}
 
 double boundary2(double rgb) {
     if (rgb < 0) {
