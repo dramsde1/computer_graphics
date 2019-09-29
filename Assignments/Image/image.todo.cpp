@@ -423,6 +423,10 @@ Image32 Image32::floydSteinbergDither( int bits ) const
     double green = 0;
     double blue = 0;
 
+    double _r = 0;
+    double _g = 0;
+    double _b = 0;
+
     double _alpha = .4375;
     double _beta = .1875;
     double _gamma = .3125;
@@ -435,9 +439,18 @@ Image32 Image32::floydSteinbergDither( int bits ) const
     Image32* img = new Image32();
     (*img).setSize(r, c);
 
+    //fill the (*img)
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            (*img)(i, j) = (*this)(i, j);
+        }
+    }
+
     for (int j = 0; j < c; j++) {
         for (int i = 0; i < r; i++ ) {
 
+            //make new pixel
+            Pixel32 pixel = Pixel32();
             //these are your dests  
             red = (double)(*this)(i,j).r;
             green = (double)(*this)(i,j).g;
@@ -459,21 +472,22 @@ Image32 Image32::floydSteinbergDither( int bits ) const
             blue = boundary(blue * 255);
             green = boundary(green * 255);
 
-            //source - dest
-            r_error = (double)(*this)(i,j).r - red;
-            g_error = (double)(*this)(i,j).g - green;
-            b_error = (double)(*this)(i,j).b - blue;
+            pixel.r = (unsigned char)red;
+            pixel.g = (unsigned char)green;
+            pixel.b = (unsigned char)blue;
 
-            (*img)(i,j).r = (unsigned char)red;
-            (*img)(i,j).g = (unsigned char)green;
-            (*img)(i,j).b = (unsigned char)blue;
+            (*img)(i, j) = pixel;
+
+            //source - dest
+            r_error = (*this)(i,j).r - pixel.r;
+            g_error = (*this)(i,j).g - pixel.g;
+            b_error = (*this)(i,j).b - pixel.b;
 
             //alpha error
-            if (j + 1 < c) {
+            if (i + 1 < c) {
                 (*img)(i, j + 1).r = (unsigned char)boundary(((double)(*this)(i, j + 1).r + (double)(_alpha * r_error)));
                 (*img)(i, j + 1).g = (unsigned char)boundary(((double)(*this)(i, j + 1).g + (double)(_alpha * g_error)));
                 (*img)(i, j + 1).b = (unsigned char)boundary(((double)(*this)(i, j + 1).b + (double)(_alpha * b_error)));
-                //cout << (double)(*img)(i, j + 1).r << endl;
             }
 
             //beta error
@@ -855,9 +869,9 @@ Image32 Image32::rotateBilinear( float angle ) const
 
             if ((int)x < _w && (int)y < _h) {
                 if (x > 0 && y > 0) {
-                    u1 = (double)floor((float)x);
+                    u1 = floor((float)x);
                     u2 = u1 + 1;
-                    v1 = (double)floor((float)y);
+                    v1 = floor((float)y);
                     v2 = v1 + 1;
                     if (u1 < _w && v1 < _h && u2 < _w && v2 < _h) {
                         (*img)(i, j) = bilinearSample(x, y);
@@ -876,8 +890,82 @@ Image32 Image32::rotateBilinear( float angle ) const
 	
 Image32 Image32::rotateGaussian( float angle ) const
 {
-	Util::Throw( "Image32::rotateGaussian undefined" );
-	return Image32();
+
+    Image32* img = new Image32();
+    double rad = 0;
+    float c_degree = 0;
+    float s_degree = 0;
+    int w = 0;
+    int h = 0;
+    int iu = 0;
+    int iv = 0;
+    float angle2 = 0;
+    float move_x = 0;
+    float move_y = 0;
+    float x = 0;
+    float y =0;
+    float variance = 0.25;
+    float radius = .5;
+    int counter = 0;
+
+    rad = (angle * PI) / 180.0;
+    c_degree = cos(rad);
+    s_degree = sin(rad);
+    w = (int)(abs(_w * c_degree) + abs(_h * s_degree));
+    h = (int)(abs(_h * c_degree) + abs(_w * s_degree));
+
+    (*img).setSize(w, h);
+
+    for (int i = 0; i < w; i++) {
+        for (int j = 0; j < h; j++) {
+            angle2 = fmod(angle, 360.0);
+            move_x = i;
+            move_y = j;
+
+            if (angle2 <= 90) {
+                move_y -= (_w * s_degree);
+            }
+
+            else if (angle2 <= 180) {
+                move_x += (_w * c_degree);
+                move_y -= h;
+
+            }
+
+            else if (angle2 <= 270) {
+                move_x -= w;
+                move_y -= h;
+                move_y -= _w * s_degree;
+            }
+
+            else if (angle2 <= 360) {
+                move_x -= abs(_h * s_degree);
+                move_y += h;
+                move_y -= abs(_w * s_degree);
+                move_y -= abs(_h * c_degree);
+            }
+
+            x = move_x * c_degree - move_y * s_degree;
+            y = move_x * s_degree + move_y * c_degree;
+
+            if ((int)x < _w && (int)y < _h) {
+                iu = floor((float)x) + 1;
+                iv = floor((float)y) + 1;
+                if (iu < _w && iv < _h) {
+                    if (x > 0 && y > 0) {
+                        (*img)(i, j) = gaussianSample(x, y, variance, radius);
+                        counter++;
+                    }
+                }
+            }
+            else {
+                //everything is better in black
+                (*img)(i, j) = Pixel32();
+            }
+        }
+    }
+
+	return (*img);
 }
 
 void Image32::setAlpha( const Image32& matte )
@@ -1077,7 +1165,6 @@ Pixel32 Image32::gaussianSample( float x , float y , float variance , float radi
     high_y = ceil((double)y + (double)radius);
 
     int h = high_y - low_y;
-
     //get within the radius
     for (int i = low_x; i < high_x; i++) {
         for (int j = low_y; j < high_y; j++) {
@@ -1097,8 +1184,6 @@ Pixel32 Image32::gaussianSample( float x , float y , float variance , float radi
     (*p).r = red / total;
     (*p).g = green / total;
     (*p).b = blue / total;
-
-
 
 	return (*p);
 }
