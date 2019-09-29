@@ -407,7 +407,9 @@ Image32 Image32::orderedDither2X2( int bits ) const
 double floydQuantize(double pixelVal, int bits) {
     pixelVal = pixelVal / 255;
     pixelVal = (double)floor(pixelVal * pow(2, bits));
-    return (double)(pixelVal / (pow(2, bits) - 1));
+    pixelVal = (double)(pixelVal / (pow(2, bits) - 1));
+    pixelVal = boundary(pixelVal * 255);
+    return pixelVal;
 }
 
 Image32 Image32::floydSteinbergDither( int bits ) const
@@ -416,6 +418,7 @@ Image32 Image32::floydSteinbergDither( int bits ) const
 
     int r = (*this).width();
     int c = (*this).height();
+
     double red = 0;
     double green = 0;
     double blue = 0;
@@ -432,49 +435,66 @@ Image32 Image32::floydSteinbergDither( int bits ) const
     Image32* img = new Image32();
     (*img).setSize(r, c);
 
-    for (int i = 0; i < r; i++ ) {
-        for (int j = 0; j < c; j++) {
+    for (int j = 0; j < c; j++) {
+        for (int i = 0; i < r; i++ ) {
 
             //these are your dests  
-            red = floydQuantize((double)(*this)(i,j).r, bits);
-            green = floydQuantize((double)(*this)(i,j).g, bits);
-            blue = floydQuantize((double)(*this)(i,j).b, bits);
+            red = (double)(*this)(i,j).r;
+            green = (double)(*this)(i,j).g;
+            blue = (double)(*this)(i,j).b;
 
-            //sourece - dest
+            red = red / 255;
+            blue = blue / 255;
+            green = green / 255;
+
+            red = (double)floor(red * pow(2, bits));
+            blue = (double)floor(blue * pow(2, bits));
+            green = (double)floor(green * pow(2, bits));
+
+            red = (double)(red / (pow(2, bits) - 1));
+            blue = (double)(blue / (pow(2, bits) - 1));
+            green = (double)(green / (pow(2, bits) - 1));
+
+            red = boundary(red * 255);
+            blue = boundary(blue * 255);
+            green = boundary(green * 255);
+
+            //source - dest
             r_error = (double)(*this)(i,j).r - red;
             g_error = (double)(*this)(i,j).g - green;
             b_error = (double)(*this)(i,j).b - blue;
 
+            (*img)(i,j).r = (unsigned char)red;
+            (*img)(i,j).g = (unsigned char)green;
+            (*img)(i,j).b = (unsigned char)blue;
+
             //alpha error
             if (j + 1 < c) {
-                cout << "here" << endl;
-                (*img)(i, j + 1).r = (unsigned char)boundary(((*img)(i, j + 1).r + (_alpha * r_error)));
-                (*img)(i, j + 1).g = (unsigned char)boundary(((*img)(i, j + 1).g + (_alpha * g_error)));
-                (*img)(i, j + 1).b = (unsigned char)boundary(((*img)(i, j + 1).b + (_alpha * b_error)));
+                (*img)(i, j + 1).r = (unsigned char)boundary(((double)(*this)(i, j + 1).r + (double)(_alpha * r_error)));
+                (*img)(i, j + 1).g = (unsigned char)boundary(((double)(*this)(i, j + 1).g + (double)(_alpha * g_error)));
+                (*img)(i, j + 1).b = (unsigned char)boundary(((double)(*this)(i, j + 1).b + (double)(_alpha * b_error)));
+                //cout << (double)(*img)(i, j + 1).r << endl;
             }
 
             //beta error
-            if (i + 1 < r && j - 1 > 0) {
-                cout << "here1" << endl;
-                (*img)(i + 1, j - 1).r = (unsigned char)boundary(((*img)(i + 1, j - 1).r + (_beta * r_error)));
-                (*img)(i + 1, j - 1).g = (unsigned char)boundary(((*img)(i + 1, j - 1).g + (_beta * g_error)));
-                (*img)(i + 1, j - 1).b = (unsigned char)boundary(((*img)(i + 1, j - 1).b + (_beta * b_error)));
+            if (i + 1 < r && j - 1 >= 0) {
+                (*img)(i + 1, j - 1).r = (unsigned char)boundary(((double)(*this)(i + 1, j - 1).r + (double)(_beta * r_error)));
+                (*img)(i + 1, j - 1).g = (unsigned char)boundary(((double)(*this)(i + 1, j - 1).g + (double)(_beta * g_error)));
+                (*img)(i + 1, j - 1).b = (unsigned char)boundary(((double)(*this)(i + 1, j - 1).b + (double)(_beta * b_error)));
             }
 
             //gamma error
             if (i + 1 < r) {
-                cout << "here2" << endl;
-                (*img)(i + 1, j).r = (unsigned char)boundary(((*img)(i + 1, j).r + (_gamma * r_error)));
-                (*img)(i + 1, j).g = (unsigned char)boundary(((*img)(i + 1, j).g + (_gamma * g_error)));
-                (*img)(i + 1, j).b = (unsigned char)boundary(((*img)(i + 1, j).b + (_gamma * b_error)));
+                (*img)(i + 1, j).r = (unsigned char)boundary(((double)(*this)(i + 1, j).r + (double)(_gamma * r_error)));
+                (*img)(i + 1, j).g = (unsigned char)boundary(((double)(*this)(i + 1, j).g + (double)(_gamma * g_error)));
+                (*img)(i + 1, j).b = (unsigned char)boundary(((double)(*this)(i + 1, j).b + (double)(_gamma * b_error)));
             }
 
             //delta error
             if (i + 1 < r && j + 1 < c) {
-                cout << "here3" << endl;
-                (*img)(i + 1, j + 1).r = (unsigned char)boundary(((*img)(i + 1, j + 1).r + (_delta * r_error)));
-                (*img)(i + 1, j + 1).g = (unsigned char)boundary(((*img)(i + 1, j + 1).g + (_delta * g_error)));
-                (*img)(i + 1, j + 1).b = (unsigned char)boundary(((*img)(i + 1, j + 1).b + (_delta * b_error)));
+                (*img)(i + 1, j + 1).r = (unsigned char)boundary(((double)(*this)(i + 1, j + 1).r + (double)(_delta * r_error)));
+                (*img)(i + 1, j + 1).g = (unsigned char)boundary(((double)(*this)(i + 1, j + 1).g + (double)(_delta * g_error)));
+                (*img)(i + 1, j + 1).b = (unsigned char)boundary(((double)(*this)(i + 1, j + 1).b + (double)(_delta * b_error)));
             }
 
         }        
@@ -695,13 +715,104 @@ Image32 Image32::scaleGaussian( float scaleFactor ) const
 	return (*img);
 }
 
+void reshift(float angle2, double *move_x, double *move_y, double c_degree, double s_degree, int _width, int _height) {
+    if (angle2 <= 90) {
+        (*move_y) -= (_width * s_degree);
+    }
+    else if (angle2 <= 180) {
+        (*move_x) += (_width * c_degree);
+        (*move_y) -= _height;
+
+    }
+    else if (angle2 <= 270) {
+        (*move_x) -= _width;
+        (*move_y) -= _height + (_width * s_degree);
+    }
+    else if (angle2 <= 360) {
+        (*move_x) -= abs(_height * s_degree);
+        (*move_y) += _height;
+        (*move_y) -= abs(_width * s_degree) + abs(_height * c_degree);
+    }
+}
+
 //track the conrners
 Image32 Image32::rotateNearest( float angle ) const
 {
 	//Util::Throw( "Image32::rotateNearest undefined" );
+    Image32* img = new Image32();
+    double rad = 0;
+    float c_degree = 0;
+    float s_degree = 0;
+    int w = 0;
+    int h = 0;
+    int iu = 0;
+    int iv = 0;
+    float angle2 = 0;
+    float move_x = 0;
+    float move_y = 0;
+    float x = 0;
+    float y =0;
 
-	return Image32();
+    rad = (angle * PI) / 180.0;
+    c_degree = cos(rad);
+    s_degree = sin(rad);
+    w = (int)(abs(_w * c_degree) + abs(_h * s_degree));
+    h = (int)(abs(_h * c_degree) + abs(_w * s_degree));
+
+    (*img).setSize(w, h);
+
+    for (int i = 0; i < w; i++) {
+        for (int j = 0; j < h; j++) {
+            angle2 = fmod(angle, 360.0);
+            move_x = i;
+            move_y = j;
+
+            if (angle2 <= 90) {
+                move_y -= (_w * s_degree);
+            }
+
+            else if (angle2 <= 180) {
+                move_x += (_w * c_degree);
+                move_y -= h;
+
+            }
+
+            else if (angle2 <= 270) {
+                move_x -= w;
+                move_y -= h;
+                move_y -= _w * s_degree;
+            }
+
+            else if (angle2 <= 360) {
+                move_x -= abs(_h * s_degree);
+                move_y += h;
+                move_y -= abs(_w * s_degree);
+                move_y -= abs(_h * c_degree);
+            }
+
+            x = move_x * c_degree - move_y * s_degree;
+            y = move_x * s_degree + move_y * c_degree;
+
+            if ((int)x < _w && (int)y < _h) {
+                iu = floor(x + 0.5);
+                iv = floor(y + 0.5);
+                if (iu < _w && iv < _h) {
+                    if (x > 0 && iv > 0) {
+                        (*img)(i, j) = nearestSample(x, y);
+                    }
+                }
+            }
+            else {
+                //everything is better in black
+                (*img)(i, j) = Pixel32();
+            }
+        }
+    }
+
+	return (*img);
 }
+
+//check in the same way your rotate 
 
 Image32 Image32::rotateBilinear( float angle ) const
 {
@@ -833,8 +944,12 @@ Image32 Image32::crop( int x1 , int y1 , int x2 , int y2 ) const
 Pixel32 Image32::nearestSample( float x , float y ) const
 {
     //Return the value of the pixel closest to the position (x,y)
-    int iu = floor(x + 0.5);
-    int iv = floor(y + 0.5);
+    int iu = (int)floor(abs(x) + 0.5);
+    cout << "near1" << endl;
+    int iv = (int)floor(abs(y) + 0.5);
+    cout << "near2" << endl;
+    cout << iu << endl;
+    cout << iv << endl;
     return (*this)(iu, iv);
 }
 
