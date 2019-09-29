@@ -715,26 +715,6 @@ Image32 Image32::scaleGaussian( float scaleFactor ) const
 	return (*img);
 }
 
-void reshift(float angle2, double *move_x, double *move_y, double c_degree, double s_degree, int _width, int _height) {
-    if (angle2 <= 90) {
-        (*move_y) -= (_width * s_degree);
-    }
-    else if (angle2 <= 180) {
-        (*move_x) += (_width * c_degree);
-        (*move_y) -= _height;
-
-    }
-    else if (angle2 <= 270) {
-        (*move_x) -= _width;
-        (*move_y) -= _height + (_width * s_degree);
-    }
-    else if (angle2 <= 360) {
-        (*move_x) -= abs(_height * s_degree);
-        (*move_y) += _height;
-        (*move_y) -= abs(_width * s_degree) + abs(_height * c_degree);
-    }
-}
-
 //track the conrners
 Image32 Image32::rotateNearest( float angle ) const
 {
@@ -797,7 +777,7 @@ Image32 Image32::rotateNearest( float angle ) const
                 iu = floor(x + 0.5);
                 iv = floor(y + 0.5);
                 if (iu < _w && iv < _h) {
-                    if (x > 0 && iv > 0) {
+                    if (x > 0 && y > 0) {
                         (*img)(i, j) = nearestSample(x, y);
                     }
                 }
@@ -816,8 +796,82 @@ Image32 Image32::rotateNearest( float angle ) const
 
 Image32 Image32::rotateBilinear( float angle ) const
 {
-	Util::Throw( "Image32::rotateBilinear undefined" );
-	return Image32();
+	//Util::Throw( "Image32::rotateNearest undefined" );
+    Image32* img = new Image32();
+    double rad = 0;
+    float c_degree = 0;
+    float s_degree = 0;
+    int w = 0;
+    int h = 0;
+    double u1 = 0;
+    double u2 = 0;
+    double v1 = 0;
+    double v2 = 0;
+    float angle2 = 0;
+    float move_x = 0;
+    float move_y = 0;
+    float x = 0;
+    float y =0;
+
+    rad = (angle * PI) / 180.0;
+    c_degree = cos(rad);
+    s_degree = sin(rad);
+    w = (int)(abs(_w * c_degree) + abs(_h * s_degree));
+    h = (int)(abs(_h * c_degree) + abs(_w * s_degree));
+
+    (*img).setSize(w, h);
+
+    for (int i = 0; i < w; i++) {
+        for (int j = 0; j < h; j++) {
+            angle2 = fmod(angle, 360.0);
+            move_x = i;
+            move_y = j;
+
+            if (angle2 <= 90) {
+                move_y -= (_w * s_degree);
+            }
+
+            else if (angle2 <= 180) {
+                move_x += (_w * c_degree);
+                move_y -= h;
+
+            }
+
+            else if (angle2 <= 270) {
+                move_x -= w;
+                move_y -= h;
+                move_y -= _w * s_degree;
+            }
+
+            else if (angle2 <= 360) {
+                move_x -= abs(_h * s_degree);
+                move_y += h;
+                move_y -= abs(_w * s_degree);
+                move_y -= abs(_h * c_degree);
+            }
+
+            x = move_x * c_degree - move_y * s_degree;
+            y = move_x * s_degree + move_y * c_degree;
+
+            if ((int)x < _w && (int)y < _h) {
+                if (x > 0 && y > 0) {
+                    u1 = (double)floor((float)x);
+                    u2 = u1 + 1;
+                    v1 = (double)floor((float)y);
+                    v2 = v1 + 1;
+                    if (u1 < _w && v1 < _h && u2 < _w && v2 < _h) {
+                        (*img)(i, j) = bilinearSample(x, y);
+                    }
+                }
+            }
+            else {
+                //everything is better in black
+                (*img)(i, j) = Pixel32();
+            }
+        }
+    }
+
+	return (*img);
 }
 	
 Image32 Image32::rotateGaussian( float angle ) const
@@ -945,11 +999,7 @@ Pixel32 Image32::nearestSample( float x , float y ) const
 {
     //Return the value of the pixel closest to the position (x,y)
     int iu = (int)floor(abs(x) + 0.5);
-    cout << "near1" << endl;
     int iv = (int)floor(abs(y) + 0.5);
-    cout << "near2" << endl;
-    cout << iu << endl;
-    cout << iv << endl;
     return (*this)(iu, iv);
 }
 
