@@ -29,8 +29,8 @@ DAMAGE.
 #ifndef POLYNOMIAL_INCLUDED
 #define POLYNOMIAL_INCLUDED
 #include <iostream>
-#include <Util/geometry.h>
-#include <Util/algebra.h>
+#include "../Util/geometry.h"
+#include "../Util/algebra.h"
 
 namespace Util
 {

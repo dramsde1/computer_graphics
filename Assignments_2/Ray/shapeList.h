@@ -2,7 +2,7 @@
 #define GROUP_INCLUDED
 #include <vector>
 #include <unordered_map>
-#include <Util/geometry.h>
+#include "../Util/geometry.h"
 #include "shape.h"
 
 namespace Ray

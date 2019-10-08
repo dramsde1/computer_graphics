@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string>
 #include <stdexcept>
-#include <Util/geometry.h>
+#include "../Util/geometry.h"
 #include "lineSegments.h"
 
 namespace Image

@@ -1,4 +1,4 @@
-#include <Util/exceptions.h>
+#include "../Util/exceptions.h"
 #include "shapeList.h"
 #include "triangle.h"
 
@@ -22,6 +22,7 @@ double Difference::intersect( Util::Ray3D ray , class RayShapeIntersectionInfo &
 	// Compute the intersection of the difference with the ray here //
 	//////////////////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Infinity;
 }
 
 bool Difference::isInside( Util::Point3D p ) const
@@ -30,6 +31,7 @@ bool Difference::isInside( Util::Point3D p ) const
 	// Determine if the point is inside the difference here //
 	//////////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return false;
 }
 
 ///////////////
@@ -41,6 +43,7 @@ double ShapeList::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bound
 	// Compute the intersection of the shape list with the ray here //
 	//////////////////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Infinity;
 }
 
 bool ShapeList::isInside( Point3D p ) const
@@ -49,6 +52,7 @@ bool ShapeList::isInside( Point3D p ) const
 	// Determine if the point is inside the shape list here //
 	//////////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return false;
 }
 
 void ShapeList::init( const LocalSceneData &data )
@@ -101,6 +105,7 @@ double AffineShape::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bou
 	// Compute the intersection of the difference with the affinelydeformed shape here //
 	/////////////////////////////////////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Infinity;
 }
 
 bool AffineShape::isInside( Point3D p ) const
@@ -109,6 +114,7 @@ bool AffineShape::isInside( Point3D p ) const
 	// Determine if the point is inside the affinely deformed shape here //
 	///////////////////////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return false;
 }
 
 void AffineShape::updateBoundingBox( void )
@@ -139,6 +145,7 @@ double TriangleList::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bo
 	// Compute the intersection of the difference with the triangle list here //
 	////////////////////////////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Infinity;
 }
 
 void TriangleList::drawOpenGL( GLSLProgram * glslProgram ) const
@@ -191,6 +198,7 @@ double Union::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , BoundingB
 	// Compute the intersection of the union with the ray here //
 	/////////////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Infinity;
 }
 
 void Union::init( const LocalSceneData &data )
@@ -217,6 +225,7 @@ bool Union::isInside( Point3D p ) const
 	// Determine if the point is inside the union here //
 	/////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return false;
 }
 
 //////////////////

@@ -38,6 +38,7 @@ namespace Util
 		// Compute the matrix exponent here //
 		//////////////////////////////////////
 		THROW( "method undefined" );
+		return Matrix();
 	}
 
 	template< unsigned int Dim >
@@ -47,6 +48,7 @@ namespace Util
 		// Compute the closest rotation here //
 		///////////////////////////////////////
 		THROW( "method undefined" );
+		return Matrix();
 	}
 
 	/////////////////
@@ -59,5 +61,6 @@ namespace Util
 		// Compute the intersection of a BoundingBox with a Ray here //
 		///////////////////////////////////////////////////////////////
 		THROW( "method undefined" );
+		return BoundingBox<1>();
 	}
 }

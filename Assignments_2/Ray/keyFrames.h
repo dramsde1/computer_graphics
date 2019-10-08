@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <string>
-#include <Util/geometry.h>
-#include <Util/interpolation.h>
+#include "../Util/geometry.h"
+#include "../Util/interpolation.h"
 
 namespace Ray
 {

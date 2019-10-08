@@ -5,8 +5,8 @@
 #include <utility>
 #include <string>
 #include <vector>
-#include <Util/geometry.h>
-#include <Util/algebra.h>
+#include "../Util/geometry.h"
+#include "../Util/algebra.h"
 
 namespace Image
 {

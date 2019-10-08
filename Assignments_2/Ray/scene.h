@@ -2,8 +2,8 @@
 #define SCENE_INCLUDED
 #include <unordered_map>
 #include <vector>
-#include <Util/geometry.h>
-#include <Image/image.h>
+#include "../Util/geometry.h"
+#include "../Image/image.h"
 #include "shape.h"
 #include "light.h"
 #include "shapeList.h"

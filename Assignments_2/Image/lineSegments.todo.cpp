@@ -14,6 +14,7 @@ double OrientedLineSegment::length( void ) const
 	// Return the length here //
 	////////////////////////////
 	THROW( "method undefined" );
+	return -1.;
 }
 double OrientedLineSegment::distance( Point2D p ) const
 {
@@ -21,6 +22,7 @@ double OrientedLineSegment::distance( Point2D p ) const
 	// Return the distance here //
 	//////////////////////////////
 	THROW( "method undefined" );
+	return -1.;
 }
 Point2D OrientedLineSegment::perpendicular( void ) const
 {
@@ -28,6 +30,7 @@ Point2D OrientedLineSegment::perpendicular( void ) const
 	// Set the perpendicular here //
 	////////////////////////////////
 	THROW( "method undefined" );
+	return Point2D();
 }
 
 Point2D OrientedLineSegment::GetSourcePosition( const OrientedLineSegment& source , const OrientedLineSegment& destination , Point2D target )
@@ -36,4 +39,5 @@ Point2D OrientedLineSegment::GetSourcePosition( const OrientedLineSegment& sourc
 	// Set the source position here //
 	//////////////////////////////////
 	THROW( "method undefined" );
+	return Point2D();
 }

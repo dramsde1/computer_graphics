@@ -1,7 +1,8 @@
 #ifndef MOUSE_INCLUDED
 #define MOUSE_INCLUDED
+#define GL_SILENCE_DEPRECATION
 
-#include "Util/geometry.h"
+#include "../Util/geometry.h"
 
 namespace Ray
 {

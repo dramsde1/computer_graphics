@@ -48,6 +48,7 @@ double Box::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , BoundingBox
 	// Compute the intersection of the shape with the ray here //
 	/////////////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Infinity;
 }
 
 bool Box::isInside( Point3D p ) const
@@ -56,6 +57,7 @@ bool Box::isInside( Point3D p ) const
 	// Determine if the point is inside the box here //
 	///////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return false;
 }
 
 void Box::drawOpenGL( GLSLProgram * glslProgram ) const

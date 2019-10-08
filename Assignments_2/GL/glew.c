@@ -31,7 +31,7 @@
 */
 
 #ifndef GLEW_INCLUDE
-#include "glew.h"
+#include <GL/glew.h>
 #else
 #include GLEW_INCLUDE
 #endif

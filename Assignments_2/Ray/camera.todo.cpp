@@ -1,3 +1,4 @@
+#define GL_SILENCE_DEPRECATION
 #include <cmath>
 #include "../Util/exceptions.h"
 #include "camera.h"
@@ -16,6 +17,7 @@ Ray3D Camera::getRay( int i , int j , int width , int height ) const
 	// Get the ray through the (i,j)-th pixel here //
 	/////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Ray3D();
 }
 
 void Camera::drawOpenGL( void ) const

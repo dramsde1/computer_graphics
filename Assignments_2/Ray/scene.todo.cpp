@@ -14,6 +14,7 @@ Point3D Scene::Reflect( Point3D v , Point3D n )
 	// Reflect here //
 	//////////////////
 	THROW( "method undefined" );
+	return Point3D();
 }
 
 bool Scene::Refract( Point3D v , Point3D n , double ir , Point3D& refract )
@@ -22,6 +23,7 @@ bool Scene::Refract( Point3D v , Point3D n , double ir , Point3D& refract )
 	// Refract here //
 	//////////////////
 	THROW( "method undefined" );
+	return false;
 }
 
 Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit )
@@ -30,6 +32,7 @@ Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit )
 	// Get the color associated with the ray here //
 	////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Point3D();
 }
 
 //////////////

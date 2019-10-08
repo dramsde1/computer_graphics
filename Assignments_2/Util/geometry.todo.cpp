@@ -42,6 +42,7 @@ namespace Util
 		// Transform Euler angles to a rotation here //
 		///////////////////////////////////////////////
 		THROW( "method undefined" );
+		return Matrix3D();
 	}
 
 	/////////////////////////////////
@@ -53,5 +54,6 @@ namespace Util
 		// Transform a unit quaternion to a rotation here //
 		////////////////////////////////////////////////////
 		THROW( "method undefined" );
+		return Matrix3D();
 	}
 }

@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include <Util/Exceptions.h>
+#include <Util/exceptions.h>
 #include "bmp.h"
 
 typedef char BYTE;					/* 8 bits */

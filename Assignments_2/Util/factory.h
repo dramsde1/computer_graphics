@@ -18,7 +18,7 @@ namespace Util
 
 	public:
 		/** The destructor is responsible for deallocating all the BaseType created */
-		~BaseFactory( void ){ for( int i=0 ; i<_baseTypes.size() ; i++ ) delete _baseTypes[i]; }
+		virtual ~BaseFactory( void ){ for( int i=0 ; i<_baseTypes.size() ; i++ ) delete _baseTypes[i]; }
 
 		/** The (publicly accessible) method for creating a new object */
 		BaseType *create( void )

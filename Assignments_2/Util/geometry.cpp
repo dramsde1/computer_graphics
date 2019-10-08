@@ -30,7 +30,7 @@ DAMAGE.
 #include <algorithm>
 #include <SVD/SVDFit.h>
 #include <SVD/MatrixMNTC.h>
-#include <Util/Exceptions.h>
+#include <Util/exceptions.h>
 #include "geometry.h"
 
 namespace Util

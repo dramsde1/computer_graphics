@@ -27,7 +27,7 @@ DAMAGE.
 */
 
 #include <math.h>
-#include <Util/exceptions.h>
+#include "../Util/exceptions.h"
 
 namespace Util
 {
@@ -54,18 +54,21 @@ namespace Util
 			// Perform linear interpolation here //
 			///////////////////////////////////////
 			THROW( "method undefined" );
+			return samples[0];
 			break;
 		case CATMULL_ROM:
 			////////////////////////////////////////////
 			// Perform Catmull-Rom interpolation here //
 			////////////////////////////////////////////
 			THROW( "method undefined" );
+			return samples[0];
 			break;
 		case UNIFORM_CUBIC_B_SPLINE:
 			///////////////////////////////////////////////////////
 			// Perform uniform cubic b-spline interpolation here //
 			///////////////////////////////////////////////////////
 			THROW( "method undefined" );
+			return samples[0];
 			break;
 		default:
 			ERROR_OUT( "unrecognized interpolation type" );

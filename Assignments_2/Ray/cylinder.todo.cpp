@@ -48,6 +48,7 @@ double Cylinder::intersect( Ray3D ray , RayShapeIntersectionInfo& iInfo , Boundi
 	// Compute the intersection of the shape with the ray here //
 	/////////////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Infinity;
 }
 
 bool Cylinder::isInside( Point3D p ) const
@@ -56,6 +57,7 @@ bool Cylinder::isInside( Point3D p ) const
 	// Determine if the point is inside the cylinder here //
 	////////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return false;
 }
 
 void Cylinder::drawOpenGL( GLSLProgram *glslProgram ) const

@@ -10,7 +10,7 @@ extern "C"
 }
 #endif // WIN32
 #include <setjmp.h>
-#include <Util/Exceptions.h>
+#include <Util/exceptions.h>
 
 struct my_error_mgr
 {

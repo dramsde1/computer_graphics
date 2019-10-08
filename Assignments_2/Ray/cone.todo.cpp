@@ -49,6 +49,7 @@ double Cone::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , BoundingBo
 	// Compute the intersection of the shape with the ray here //
 	/////////////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Infinity;
 }
 
 bool Cone::isInside( Point3D p ) const
@@ -57,6 +58,7 @@ bool Cone::isInside( Point3D p ) const
 	// Determine if the point is inside the box here //
 	///////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return false;
 }
 
 void Cone::drawOpenGL( GLSLProgram * glslProgram ) const

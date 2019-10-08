@@ -16,6 +16,7 @@ Point3D PointLight::getAmbient( Ray3D ray , const RayShapeIntersectionInfo& iInf
 	// Get the ambient contribution of the light here //
 	////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Point3D();
 }
 
 Point3D PointLight::getDiffuse( Ray3D ray , const RayShapeIntersectionInfo& iInfo ) const
@@ -24,6 +25,7 @@ Point3D PointLight::getDiffuse( Ray3D ray , const RayShapeIntersectionInfo& iInf
 	// Get the diffuse contribution of the light here //
 	////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Point3D();
 }
 
 Point3D PointLight::getSpecular( Ray3D ray , const RayShapeIntersectionInfo& iInfo ) const
@@ -32,6 +34,7 @@ Point3D PointLight::getSpecular( Ray3D ray , const RayShapeIntersectionInfo& iIn
 	// Get the specular contribution of the light here //
 	/////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Point3D();
 }
 
 bool PointLight::isInShadow( const RayShapeIntersectionInfo& iInfo , const Shape* shape ) const
@@ -40,6 +43,7 @@ bool PointLight::isInShadow( const RayShapeIntersectionInfo& iInfo , const Shape
 	// Determine if the light is in shadow here //
 	//////////////////////////////////////////////
 	THROW( "method undefined" );
+	return false;
 }
 
 Point3D PointLight::transparency( const RayShapeIntersectionInfo &iInfo , const Shape &shape , Point3D cLimit ) const
@@ -48,6 +52,7 @@ Point3D PointLight::transparency( const RayShapeIntersectionInfo &iInfo , const 
 	// Compute the transparency along the path to the light //
 	//////////////////////////////////////////////////////////
 	THROW( "method undefined" );
+	return Point3D( 1. , 1. , 1. );
 }
 
 void PointLight::drawOpenGL( int index , GLSLProgram * glslProgram ) const
