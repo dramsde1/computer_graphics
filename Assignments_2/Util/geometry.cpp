@@ -28,9 +28,9 @@ DAMAGE.
 
 #include <cmath>
 #include <algorithm>
-#include <SVD/SVDFit.h>
-#include <SVD/MatrixMNTC.h>
-#include <Util/exceptions.h>
+#include "../SVD/SVDFit.h"
+#include "../SVD/MatrixMNTC.h"
+#include "../Util/exceptions.h"
 #include "geometry.h"
 
 namespace Util

@@ -16,8 +16,37 @@ Ray3D Camera::getRay( int i , int j , int width , int height ) const
 	/////////////////////////////////////////////////
 	// Get the ray through the (i,j)-th pixel here //
 	/////////////////////////////////////////////////
-	THROW( "method undefined" );
-	return Ray3D();
+    //First view plane
+    double distance = 5;
+    Point3D towards = (*this).forward;
+    double angle_v = (*this).heightAngle;
+    Point3D up = (*this).up;
+    Point3D p0 = (*this).position;
+    Point3D p1 = p0 + distance * towards - distance * tan(angle_v/2) * up;
+    Point3D p2 = p0 + distance * towards + distance * tan(angle_v/2) * up;
+    Point3D pi = p1 + ((double)(i + 0.5) / height) * (p2 - p1);
+
+
+    //up is right 
+    //up becomes right
+    double ar = height / width;
+    //sin(theta_h / 2) = sin(theta_v / 2) / ar 
+    double angle_h = sin(angle_v / 2) / ar;
+    //theta_h / 2 = arcsin(sin(theta_v / 2) / ar) 
+    angle_h = asin(angle_h);
+    //theta_h = arcsin(sin(theta_v / 2) / ar) * 2 
+    angle_h = angle_h * 2;
+    Point3D right = (*this).right;
+    Point3D P1 = p0 + distance * towards - distance * tan(angle_h / 2) * right; 
+    Point3D P2 = p0 + distance * towards + distance * tan(angle_h / 2) * right; 
+    Point3D Pj = P1 + ((double)(j + 0.5) / width) * (P2 - P1);
+
+    //add these two 
+    Point3D Pij = pi + Pj;
+
+    Ray3D *ray = new Ray3D(p0, Pij);
+
+	return *ray;
 }
 
 void Camera::drawOpenGL( void ) const
