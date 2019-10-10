@@ -42,7 +42,7 @@ double ShapeList::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bound
 	//////////////////////////////////////////////////////////////////
 	// Compute the intersection of the shape list with the ray here //
 	//////////////////////////////////////////////////////////////////
-	THROW( "method undefined" );
+    
 	return Infinity;
 }
 

@@ -22,10 +22,6 @@ Ray3D Camera::getRay( int i , int j , int width , int height ) const
     double angle_v = (*this).heightAngle;
     Point3D up = (*this).up;
     Point3D p0 = (*this).position;
-    Point3D p1 = p0 + distance * towards - distance * tan(angle_v/2) * up;
-    Point3D p2 = p0 + distance * towards + distance * tan(angle_v/2) * up;
-    Point3D pi = p1 + ((double)(i + 0.5) / height) * (p2 - p1);
-
 
     //up is right 
     //up becomes right
@@ -37,14 +33,22 @@ Ray3D Camera::getRay( int i , int j , int width , int height ) const
     //theta_h = arcsin(sin(theta_v / 2) / ar) * 2 
     angle_h = angle_h * 2;
     Point3D right = (*this).right;
-    Point3D P1 = p0 + distance * towards - distance * tan(angle_h / 2) * right; 
-    Point3D P2 = p0 + distance * towards + distance * tan(angle_h / 2) * right; 
-    Point3D Pj = P1 + ((double)(j + 0.5) / width) * (P2 - P1);
 
-    //add these two 
-    Point3D Pij = pi + Pj;
+    //combine the above two steps
+    //down and to the left
+    Point3D pBottomLeft = p0 + distance * towards - distance * tan(angle_v/2) * up - distance * tan(angle_h / 2) * right;
+    //down and to the right
+    Point3D pBottomRight = p0 + distance * towards - distance * tan(angle_v/2) * up + distance * tan(angle_h / 2) * right;
+    //up and to the left
+    Point3D pTopLeft = p0 + distance * towards + distance * tan(angle_v/2) * up - distance * tan(angle_h / 2) * right;
+    //up and to the right
+    Point3D pTopRight = p0 + distance * towards + distance * tan(angle_v/2) * up + distance * tan(angle_h / 2) * right;
+    //try using right or up 
+    Point3D target = pTopLeft + ((j + 0.5) / width) * (pTopRight - pTopLeft) + ((i + 0.5) / height) * (pTopRight - pBottomRight);
+    target = target.unit();
 
-    Ray3D *ray = new Ray3D(p0, Pij);
+
+    Ray3D *ray = new Ray3D(p0, target);
 
 	return *ray;
 }

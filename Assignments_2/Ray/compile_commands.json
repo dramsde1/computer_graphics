@@ -1,0 +1,21 @@
+ {
+  "directory": "/Users/devinramsden/Desktop/computer_graphics/Assignments_2",
+  "arguments": [
+   "g++",
+   "-c",
+   "-o",
+   "Bin/Linux/Release/Assignment2/main2.o",
+   "-I.",
+   "-I..",
+   "-std=c++14",
+   "-Wunused-result",
+   "-O3",
+   "-DRELEASE",
+   "-funroll-loops",
+   "-ffast-math",
+   "-DNDEBUG",
+   "-I/usr/include/",
+   "main2.cpp"
+  ],
+  "file": "main2.cpp"
+ }
