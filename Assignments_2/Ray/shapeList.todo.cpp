@@ -21,6 +21,7 @@ double Difference::intersect( Util::Ray3D ray , class RayShapeIntersectionInfo &
 	//////////////////////////////////////////////////////////////////
 	// Compute the intersection of the difference with the ray here //
 	//////////////////////////////////////////////////////////////////
+
 	THROW( "method undefined" );
 	return Infinity;
 }
@@ -42,7 +43,7 @@ double ShapeList::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bound
 	//////////////////////////////////////////////////////////////////
 	// Compute the intersection of the shape list with the ray here //
 	//////////////////////////////////////////////////////////////////
-    
+    //
 	return Infinity;
 }
 

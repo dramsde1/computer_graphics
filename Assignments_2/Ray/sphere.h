@@ -1,7 +1,7 @@
 #ifndef SPHERE_INCLUDED
 #define SPHERE_INCLUDED
-#include <Util/geometry.h>
-#include <Util/polynomial.h>
+#include "../Util/geometry.h"
+#include "../Util/polynomial.h"
 #include "shape.h"
 
 namespace Ray
