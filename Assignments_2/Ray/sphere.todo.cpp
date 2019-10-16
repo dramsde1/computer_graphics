@@ -27,7 +27,7 @@ void Sphere::updateBoundingBox( void )
 	///////////////////////////////
 	// Set the _bBox object here //
 	///////////////////////////////
-	THROW( "method undefined" );
+    printf("method undefined");
 }
 void Sphere::initOpenGL( void )
 {

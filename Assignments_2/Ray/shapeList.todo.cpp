@@ -43,8 +43,7 @@ double ShapeList::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bound
 	//////////////////////////////////////////////////////////////////
 	// Compute the intersection of the shape list with the ray here //
 	//////////////////////////////////////////////////////////////////
-    //
-	return Infinity;
+    return (*this).intersect(ray, iInfo, range);
 }
 
 bool ShapeList::isInside( Point3D p ) const
@@ -105,8 +104,8 @@ double AffineShape::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bou
 	/////////////////////////////////////////////////////////////////////////////////////
 	// Compute the intersection of the difference with the affinelydeformed shape here //
 	/////////////////////////////////////////////////////////////////////////////////////
-	THROW( "method undefined" );
-	return Infinity;
+	//THROW( "method undefined" );
+	return _shape->intersect(ray, iInfo, range, validityLambda);
 }
 
 bool AffineShape::isInside( Point3D p ) const

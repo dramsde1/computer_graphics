@@ -1,5 +1,5 @@
 #include <cmath>
-#include <Util/exceptions.h>
+#include "../Util/exceptions.h"
 #include "triangle.h"
 
 using namespace Ray;

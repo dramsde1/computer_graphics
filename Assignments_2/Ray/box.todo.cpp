@@ -1,5 +1,5 @@
 #include <cmath>
-#include  <Util/exceptions.h>
+#include  "../Util/exceptions.h"
 #include "scene.h"
 #include "box.h"
 
@@ -28,7 +28,8 @@ void Box::updateBoundingBox( void )
 	///////////////////////////////
 	// Set the _bBox object here //
 	///////////////////////////////
-	THROW( "method undefined" );
+    printf("updateBoundingBox");
+	//THROW( "method undefined" );
 }
 
 void Box::initOpenGL( void )

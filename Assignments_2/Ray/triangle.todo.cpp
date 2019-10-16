@@ -1,5 +1,5 @@
 #include <cmath>
-#include <Util/exceptions.h>
+#include "../Util/exceptions.h"
 #include "triangle.h"
 
 using namespace Ray;
@@ -47,8 +47,45 @@ double Triangle::intersect( Ray3D ray , RayShapeIntersectionInfo& iInfo , Boundi
 	/////////////////////////////////////////////////////////////
 	// Compute the intersection of the shape with the ray here //
 	/////////////////////////////////////////////////////////////
-	THROW( "method undefined" );
-	return Infinity;
+	//THROW( "method undefined" );
+    Point3D rayOrigin = ray.position;
+    Point3D rayDirection = ray.direction;
+    Point3D vertexA = _v[1] - _v[0]; //first edge
+    Point3D vertexB = _v[2] - _v[0]; //second edge
+    Point3D vertexNormal = vertexA.CrossProduct(vertexB); //triangle normal
+    vertexNormal = vertexNormal.unit();
+    double D = vertexNormal.dot(_v[0]);
+    //get position P
+    //first check to see if ray and triangle are parallel
+    //dot product of two perp vectors is zero
+    if (vertexNormal.dot(rayDirection) == 0) {
+        return Infinity;
+    }
+    //camera oriented on negative z axis
+    double t = - (vertexNormal.dot(rayOrigin) + D) / vertexNormal.dot(rayDirection);
+    //behind ray
+    if (t < 0) {
+        return Infinity;
+    }
+    Point3D P = rayOrigin + t * rayDirection;
+
+    Point3D e0 = _v[1] - _v[0];
+    Point3D e1 = _v[2] - _v[1];
+    Point3D e2 = _v[0] - _v[2];
+    Point3D C0 = P - _v[0];
+    Point3D C1 = P - _v[1];
+    Point3D C2 = P - _v[2];
+    //check if point P is inside triangle
+    double check1 = vertexNormal.dot(e0.CrossProduct(C0));
+    double check2 = vertexNormal.dot(e1.CrossProduct(C1));
+    double check3 = vertexNormal.dot(e2.CrossProduct(C2));
+    
+    if (check1 > 0 && check2 > 0 && check3 > 0) {
+        return t;
+    }
+    else {
+	    return Infinity;
+    }
 }
 
 void Triangle::drawOpenGL( GLSLProgram * glslProgram ) const

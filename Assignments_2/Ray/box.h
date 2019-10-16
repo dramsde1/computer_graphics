@@ -1,6 +1,6 @@
 #ifndef BOX_INCLUDED
 #define BOX_INCLUDED
-#include <Util/geometry.h>
+#include "../Util/geometry.h"
 #include "shape.h"
 
 namespace Ray
