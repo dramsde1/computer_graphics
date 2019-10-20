@@ -18,19 +18,24 @@ Ray3D Camera::getRay( int i , int j , int width , int height ) const
 	// Get the ray through the (i,j)-th pixel here //
 	/////////////////////////////////////////////////
     //First view plane
-    double distance = 1;
+    //double distance = 1;
     Point3D towards = (*this).forward;
     double angle_v = (*this).heightAngle;
     Point3D up = (*this).up;
     Point3D p0 = (*this).position;
+    std::cout << p0 << std::endl;
     double ar = (double)height / (double)width;
-    std::cout << "angle_v ";
-    std::cout << (*this).heightAngle << std::endl;
     double scale = tan(angle_v * 0.5);
+ //   std::cout << "scale";
+ //   std::cout << scale << std::endl;
     //std::cout << "scal ";
     //std::cout << scale << std::endl;
     double x = (2 * (i + 0.5) / (double)width - 1) * ar * scale;
+  //  std::cout << "x";
+  //  std::cout << x << std::endl;
     double y = (1 - 2 * (j + 0.5) / (double)height) * scale; 
+   // std::cout << "y";
+   // std::cout << y << std::endl;
     Point3D target = Point3D(x, y, -1.0); 
     Point3D dir;
     dir = target - p0;
