@@ -1,9 +1,9 @@
 #ifndef RAY_WINDOW_INCLUDED
 #define RAY_WINDOW_INCLUDED
 
-#include <Util/timer.h>
-#include <Ray/mouse.h>
-#include <Ray/scene.h>
+#include "../Util/timer.h"
+#include "mouse.h"
+#include "scene.h"
 
 namespace Ray
 {

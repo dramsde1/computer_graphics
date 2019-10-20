@@ -43,7 +43,20 @@ double ShapeList::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bound
 	//////////////////////////////////////////////////////////////////
 	// Compute the intersection of the shape list with the ray here //
 	//////////////////////////////////////////////////////////////////
-    return (*this).intersect(ray, iInfo, range);
+    //need to loop through all the shapes and check for intersection of the ray
+    //std::vector<int>::iterator it = vector.begin();
+    double minVal = Infinity;
+    double t = 0;
+    std::vector<Shape*> shapes = (*this).shapes;
+    std::vector<Shape*>::iterator it;
+    for (it = shapes.begin(); it != shapes.end(); it++) {
+        t = (*it)->intersect(ray, iInfo, range);
+        if (t < minVal) {
+            minVal = t; 
+        }
+    }
+
+    return minVal;
 }
 
 bool ShapeList::isInside( Point3D p ) const
@@ -71,7 +84,7 @@ void ShapeList::updateBoundingBox( void )
 	///////////////////////////////
 	// Set the _bBox object here //
 	///////////////////////////////
-	THROW( "method undefined" );
+	//THROW( "method undefined" );
 }
 
 void ShapeList::initOpenGL( void )
@@ -144,7 +157,18 @@ double TriangleList::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bo
 	////////////////////////////////////////////////////////////////////////////
 	// Compute the intersection of the difference with the triangle list here //
 	////////////////////////////////////////////////////////////////////////////
-	THROW( "method undefined" );
+	//THROW( "method undefined" );
+    double minVal = Infinity;
+    double t = 0;
+    std::vector<Shape*> shapes = (*this)._shapeList.shapes;
+    std::vector<Shape*>::iterator it;
+    for (it = shapes.begin(); it != shapes.end(); it++) {
+        t = (*it)->intersect(ray, iInfo, range);
+        if (t < minVal) {
+            minVal = t; 
+        }
+    }
+
 	return Infinity;
 }
 

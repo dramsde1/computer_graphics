@@ -1,8 +1,8 @@
 #include <fstream>
 #include <cctype>
 #include <cmath>
-#include <Util/exceptions.h>
-#include <Image/bmp.h>
+#include "../Util/exceptions.h"
+#include "../Image/bmp.h"
 #include "scene.h"
 #include "fileInstance.h"
 #include "shapeList.h"

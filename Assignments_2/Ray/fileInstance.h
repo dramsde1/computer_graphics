@@ -1,6 +1,6 @@
 #ifndef RAY_FILE_INSTANCE_INCLUDED
 #define RAY_FILE_INSTANCE_INCLUDED
-#include <Util/geometry.h>
+#include "../Util/geometry.h"
 #include "shape.h"
 #include "scene.h"
 

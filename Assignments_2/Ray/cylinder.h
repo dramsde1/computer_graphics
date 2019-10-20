@@ -1,7 +1,7 @@
 #ifndef CYLINDER_INCLUDED
 #define CYLINDER_INCLUDED
-#include <Util/geometry.h>
-#include <Util/polynomial.h>
+#include "../Util/geometry.h"
+#include "../Util/polynomial.h"
 #include "shape.h"
 
 namespace Ray
