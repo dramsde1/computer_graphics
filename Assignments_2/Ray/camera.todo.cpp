@@ -17,41 +17,45 @@ Ray3D Camera::getRay( int i , int j , int width , int height ) const
 	/////////////////////////////////////////////////
 	// Get the ray through the (i,j)-th pixel here //
 	/////////////////////////////////////////////////
-    Point3D towards = (*this).forward;
+    Point3D towards = (*this).forward.unit();
     double distance = 1;
     double angle_v = (*this).heightAngle;
     Point3D up = (*this).up;
     Point3D p0 = (*this).position;
-    Point3D p1 = p0 + distance * towards - distance * tan(angle_v/2) * up;
-    Point3D p2 = p0 + distance * towards + distance * tan(angle_v/2) * up;
-    Point3D pi = p1 + ((double)(i + 0.5) / height) * (p2 - p1);
-
-    double ar = height / width;
+    double ar = height / (double)width;
     double angle_h = asin(sin(angle_v / 2) / ar) * 2;
     Point3D right = (*this).right;
-    Point3D P1 = p0 + distance * towards - distance * tan(angle_h / 2) * right; 
-    Point3D P2 = p0 + distance * towards + distance * tan(angle_h / 2) * right; 
-    Point3D Pj = P1 + ((double)(j + 0.5) / width) * (P2 - P1);
-    //add these two 
-    Point3D Pij = pi + Pj;
+    //Point3D P1 = p0 + distance * towards - distance * tan(angle_h / 2) * right; 
+    //Point3D P2 = p0 + distance * towards + distance * tan(angle_h / 2) * right; 
+    //Point3D p1 = p0 + distance * towards - distance * tan(angle_v/2) * up;
+    //Point3D p2 = p0 + distance * towards + distance * tan(angle_v/2) * up;
+    Point3D view = p0 + distance * towards;
+    Point3D vert = distance * tan(angle_v/2) * up;
+    Point3D hor = distance * tan(angle_h / 2) * right;
+    Point3D p1 = view - vert;
+    Point3D p2 = view + vert;
+    Point3D P1 = view - hor;
+    Point3D P2 = view + hor;
+
+    //calculate i
+    Point3D pi = P1 + ((i + 0.5) / (double)height) * (P2 - P1);
+    //calculate j
+    Point3D pj = p1 + ((j + 0.5) / (double)width) * (p2 - p1);
+
+    Point3D target = pi + pj - view;
+    target = (target - this->position).unit();
+
+    //ipos - jpos - vdistanve
+    //get distance from camera at the end
     //combine the above two steps
-    //down and to the left
-    Point3D pBottomLeft = p0 + distance * towards - distance * tan(angle_v/2) * up - distance * tan(angle_h / 2) * right;
-    //down and to the right
-    Point3D pBottomRight = p0 + distance * towards - distance * tan(angle_v/2) * up + distance * tan(angle_h / 2) * right;
     //up and to the left
-    Point3D pTopLeft = p0 + distance * towards + distance * tan(angle_v/2) * up - distance * tan(angle_h / 2) * right;
-    //up and to the right
-    Point3D pTopRight = p0 + distance * towards + distance * tan(angle_v/2) * up + distance * tan(angle_h / 2) * right;
+    //Point3D pTopLeft = p0 + distance * towards + distance * tan(angle_v/2) * up - distance * tan(angle_h / 2) * right;
     //try using right or up 
-    Point3D target = pTopLeft + ((j + 0.5) / width) * (pTopRight - pTopLeft) + ((i + 0.5) / height) * (pTopRight - pBottomRight);
-    target = target.unit();
-
-
-    Ray3D *ray = new Ray3D(p0, target);
-
-
-    return *ray;
+    //Point3D target = pTopLeft + ((j + 0.5) / width) * (P2 - P1) + ((i + 0.5) / height) * (p2 - p1);
+    //Point3D target = pTopLeft + ((j + 0.5) / width) * (pTopRight - pTopLeft) + ((i + 0.5) / height) * (pTopRight - pBottomRight);
+    //target = target.unit();
+    std::cout << target << std::endl;
+    return Ray3D(p0, target);
 }
 
 void Camera::drawOpenGL( void ) const

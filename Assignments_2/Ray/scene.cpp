@@ -500,7 +500,10 @@ Image32 Scene::rayTrace( int width , int height , int rLimit , double cLimit )
 			try
 			{
 				Ray3D ray = _globalData.camera.getRay( i , height-j-1 , width , height );
+                std::cout << "trace" << std::endl;
 				Point3D c = getColor( ray , rLimit , Point3D( cLimit , cLimit , cLimit ) );
+                std::cout << "color";
+                std::cout << c << std::endl;
 				Pixel32 p;
 				p.r = (int)(c[0]*255);
 				p.g = (int)(c[1]*255);
