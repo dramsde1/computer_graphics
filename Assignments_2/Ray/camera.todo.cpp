@@ -45,16 +45,6 @@ Ray3D Camera::getRay( int i , int j , int width , int height ) const
     Point3D target = pi + pj - view;
     target = (target - this->position).unit();
 
-    //ipos - jpos - vdistanve
-    //get distance from camera at the end
-    //combine the above two steps
-    //up and to the left
-    //Point3D pTopLeft = p0 + distance * towards + distance * tan(angle_v/2) * up - distance * tan(angle_h / 2) * right;
-    //try using right or up 
-    //Point3D target = pTopLeft + ((j + 0.5) / width) * (P2 - P1) + ((i + 0.5) / height) * (p2 - p1);
-    //Point3D target = pTopLeft + ((j + 0.5) / width) * (pTopRight - pTopLeft) + ((i + 0.5) / height) * (pTopRight - pBottomRight);
-    //target = target.unit();
-    std::cout << target << std::endl;
     return Ray3D(p0, target);
 }
 

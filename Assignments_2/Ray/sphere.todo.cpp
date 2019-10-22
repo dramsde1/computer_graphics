@@ -32,7 +32,6 @@ void Sphere::updateBoundingBox( void )
 void Sphere::initOpenGL( void )
 {
 	///////////////////////////
-	// Do OpenGL set-up here //
 	///////////////////////////
 	WARN_ONCE( "method undefined" );
 

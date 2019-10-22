@@ -158,18 +158,7 @@ double TriangleList::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bo
 	// Compute the intersection of the difference with the triangle list here //
 	////////////////////////////////////////////////////////////////////////////
 	//THROW( "method undefined" );
-    double minVal = Infinity;
-    double t = 0;
-    std::vector<Shape*> shapes = (*this)._shapeList.shapes;
-    std::vector<Shape*>::iterator it;
-    for (it = shapes.begin(); it != shapes.end(); it++) {
-        t = (*it)->intersect(ray, iInfo, range);
-        if (t < minVal) {
-            minVal = t; 
-        }
-    }
-
-	return Infinity;
+   return (*this)._shapeList.intersect(ray, iInfo, range, validityLambda);
 }
 
 void TriangleList::drawOpenGL( GLSLProgram * glslProgram ) const
