@@ -158,6 +158,9 @@ double TriangleList::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bo
 	// Compute the intersection of the difference with the triangle list here //
 	////////////////////////////////////////////////////////////////////////////
 	//THROW( "method undefined" );
+
+   //RayShapeIntersectionInfo temp = RayShapeIntersectionInfo();
+   iInfo.material = (*this)._material;
    return (*this)._shapeList.intersect(ray, iInfo, range, validityLambda);
 }
 

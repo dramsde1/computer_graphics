@@ -32,6 +32,7 @@ Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit )
 	// Get the color associated with the ray here //
 	////////////////////////////////////////////////
 	//THROW( "method undefined" );
+    //get temp variable that 
     RayShapeIntersectionInfo iInfo = RayShapeIntersectionInfo();
     Point3D w = Point3D(1.0, 1.0, 1.0);
     Point3D b = Point3D(0.0, 0.0, 0.0);
