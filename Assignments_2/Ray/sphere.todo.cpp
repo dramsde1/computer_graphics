@@ -63,43 +63,35 @@ double Sphere::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bounding
     double * arr = new double[2]; //dont forget to free
     double numRoots = p.roots(arr);
     temp.material = (*this)._material;
-    if (numRoots > 0) {
-        return 1;
+    if (numRoots == 1) {
+        t0 = arr[0];
+        if (t0 < 0) return Infinity;
+        Point3D P = rayOrigin + rayDirection * t0;
+        temp.position = P;
+        temp.normal = (P - sphereCenter).unit();
+        temp.material = (*this)._material;
+        iInfo = temp;
+        return t0;
     }
-    return Infinity;
-//    if (numRoots > 0) {
-//        if (numRoots == 1) {
-//            t0 = arr[0];
-//            if (t0 < 0) return Infinity;
-//            Point3D P = rayOrigin + rayDirection * t0;
-//            temp.position = P;
-//            temp.normal = (P - sphereCenter).unit();
-//            temp.material = (*this)._material;
-//            iInfo = temp;
-//            std::cout << t0 << std::endl;
-//            return t0;
-//        }
-//        if (numRoots == 2) {
-//            t0 = arr[0];
-//            t1 = arr[1];
-//            if (t0 > t1) std::swap(t0, t1); 
-//            if (t0 < 0) { 
-//                t0 = t1; // if t0 is negative, let's use t1 instead 
-//                if (t0 < 0) return Infinity; // both t0 and t1 are negative 
-//            } 
-//            Point3D P = rayOrigin + rayDirection * t0;
-//            temp.position = P;
-//            temp.normal = (P - sphereCenter).unit();
-//            temp.material = (*this)._material;
-//            iInfo = temp;
-//            std::cout << t0 << std::endl;
-//            return t0;
-//        }
-//    }
-//    else {
-//        return Infinity;
-//    }
-    //return first interection point
+    if (numRoots == 2) {
+        t0 = arr[0];
+        t1 = arr[1];
+        if (t0 > t1) std::swap(t0, t1); 
+        if (t0 < 0) { 
+            t0 = t1; // if t0 is negative, let's use t1 instead 
+            if (t0 < 0) return Infinity; // both t0 and t1 are negative 
+        } 
+        Point3D P = rayOrigin + rayDirection * t0;
+        temp.position = P;
+        temp.normal = (P - sphereCenter).unit();
+        temp.material = (*this)._material;
+        iInfo = temp;
+        return t0;
+    }
+    else {
+        return Infinity;
+    }
+  //return first interection point
 }
 //do iInfo stuff here for sphere 
 //do iInfo stuff in TriangleList in TriangleList

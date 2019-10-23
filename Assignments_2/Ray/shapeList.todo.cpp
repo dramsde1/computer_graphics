@@ -55,7 +55,6 @@ double ShapeList::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bound
             minVal = t; 
         }
     }
-
     return minVal;
 }
 
@@ -162,6 +161,7 @@ double TriangleList::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bo
    //RayShapeIntersectionInfo temp = RayShapeIntersectionInfo();
    iInfo.material = (*this)._material;
    return (*this)._shapeList.intersect(ray, iInfo, range, validityLambda);
+
 }
 
 void TriangleList::drawOpenGL( GLSLProgram * glslProgram ) const
