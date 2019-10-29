@@ -45,16 +45,21 @@ double ShapeList::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bound
 	//////////////////////////////////////////////////////////////////
     //need to loop through all the shapes and check for intersection of the ray
     //std::vector<int>::iterator it = vector.begin();
+    //std::cout << "hello" << std::endl;
     double minVal = Infinity;
     double t = 0;
-    std::vector<Shape*> shapes = (*this).shapes;
-    std::vector<Shape*>::iterator it;
+    std::vector<Shape*>::const_iterator it;
+    RayShapeIntersectionInfo temp;
     for (it = shapes.begin(); it != shapes.end(); it++) {
-        t = (*it)->intersect(ray, iInfo, range);
+        //std::cout << name() << "->" << (*it)->name() << std::endl;
+        t = (*it)->intersect(ray, temp, range);
         if (t < minVal) {
             minVal = t; 
+            iInfo = temp;
+
         }
     }
+    //std::cout << "goodbye" << std::endl;
     return minVal;
 }
 
@@ -116,8 +121,18 @@ double AffineShape::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bou
 	/////////////////////////////////////////////////////////////////////////////////////
 	// Compute the intersection of the difference with the affinelydeformed shape here //
 	/////////////////////////////////////////////////////////////////////////////////////
-	//THROW( "method undefined" );
-	return _shape->intersect(ray, iInfo, range, validityLambda);
+    Point3D positionLocal = getInverseMatrix() * ray.position;  // to 3x3
+    Point3D directionLocal = (Matrix3D(getInverseMatrix()) * ray.direction).unit(); //to 3x3
+    Ray3D rayLocal = Ray3D(positionLocal, directionLocal);
+    double t = _shape->intersect(rayLocal, iInfo, range, validityLambda);
+    //adjust the t and the normal
+    if (t != Infinity && t > Epsilon) {
+        iInfo.normal = (getNormalMatrix() * iInfo.normal).unit(); //transpose
+        iInfo.position = getMatrix() * iInfo.position;
+        double t2 = Point3D::Distance(iInfo.position, ray.position);
+        return t2;
+    }
+    return Infinity;
 }
 
 bool AffineShape::isInside( Point3D p ) const
@@ -159,8 +174,13 @@ double TriangleList::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bo
 	//THROW( "method undefined" );
 
    //RayShapeIntersectionInfo temp = RayShapeIntersectionInfo();
+   double t = (*this)._shapeList.intersect(ray, iInfo, range, validityLambda);
    iInfo.material = (*this)._material;
-   return (*this)._shapeList.intersect(ray, iInfo, range, validityLambda);
+   //std::cout << "hi" << std::endl;
+   //std::cout << _material->emissive << std::endl;
+   
+   //std::cout << iInfo.material->emissive << std::endl;
+   return t;
 
 }
 

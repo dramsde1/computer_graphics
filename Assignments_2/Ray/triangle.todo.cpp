@@ -90,6 +90,7 @@ double Triangle::intersect( Ray3D ray , RayShapeIntersectionInfo& iInfo , Boundi
     //double check3 = vertexNormal.dot(e2.CrossProduct(C2));
     
     if (check1 > 0 && check2 > 0 && check3 > 0) {
+        iInfo = temp;
         return t;
     }
     else {

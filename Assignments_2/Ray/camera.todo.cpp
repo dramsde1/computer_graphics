@@ -44,7 +44,6 @@ Ray3D Camera::getRay( int i , int j , int width , int height ) const
 
     Point3D target = pi + pj - view;
     target = (target - this->position).unit();
-
     return Ray3D(p0, target);
 }
 

@@ -45,7 +45,6 @@ double Sphere::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bounding
 	//////////////////////////////////////////////////////////////
 	// Compute the intersection of the sphere with the ray here //
 	//////////////////////////////////////////////////////////////
-    RayShapeIntersectionInfo temp = RayShapeIntersectionInfo();
     double t0, t1, t = 0;
     Point3D rayOrigin = ray.position;
     Point3D rayDirection = ray.direction.unit();
@@ -60,17 +59,15 @@ double Sphere::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bounding
     p.coefficient(2) = 1; //2 is the degree of x and 1 is the value of the coefficient
     p.coefficient(1) = b;
     p.coefficient(0) = c;
-    double * arr = new double[2]; //dont forget to free
+    double arr[2]; //dont forget to free
     double numRoots = p.roots(arr);
-    temp.material = (*this)._material;
     if (numRoots == 1) {
         t0 = arr[0];
         if (t0 < 0) return Infinity;
         Point3D P = rayOrigin + rayDirection * t0;
-        temp.position = P;
-        temp.normal = (P - sphereCenter).unit();
-        temp.material = (*this)._material;
-        iInfo = temp;
+        iInfo.material = (*this)._material;
+        iInfo.position = P;
+        iInfo.normal = (P - sphereCenter).unit();
         return t0;
     }
     if (numRoots == 2) {
@@ -82,10 +79,9 @@ double Sphere::intersect( Ray3D ray , RayShapeIntersectionInfo &iInfo , Bounding
             if (t0 < 0) return Infinity; // both t0 and t1 are negative 
         } 
         Point3D P = rayOrigin + rayDirection * t0;
-        temp.position = P;
-        temp.normal = (P - sphereCenter).unit();
-        temp.material = (*this)._material;
-        iInfo = temp;
+        iInfo.material = (*this)._material;
+        iInfo.position = P;
+        iInfo.normal = (P - sphereCenter).unit();
         return t0;
     }
     else {
