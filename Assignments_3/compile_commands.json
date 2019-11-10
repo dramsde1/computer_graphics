@@ -1,0 +1,23 @@
+[
+ {
+  "directory": "/Users/devinramsden/Desktop/computer_graphics/Assignments_3",
+  "arguments": [
+   "g++",
+   "-c",
+   "-o",
+   "Bin/Linux/Release/Assignment3/main3.o",
+   "-I.",
+   "-I..",
+   "-std=c++14",
+   "-Wunused-result",
+   "-O3",
+   "-DRELEASE",
+   "-funroll-loops",
+   "-ffast-math",
+   "-DNDEBUG",
+   "-I/usr/include/",
+   "main3.cpp"
+  ],
+  "file": "main3.cpp"
+ }
+]
