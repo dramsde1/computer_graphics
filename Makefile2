@@ -1,4 +1,4 @@
-TARGET = Assignment2
+TARGET = RayTracer
 DEPENDENDENT_DIRS = Image Util Ray GL
 SOURCE = main2.cpp
 

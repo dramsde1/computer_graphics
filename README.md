@@ -7,16 +7,16 @@ A simple image processing program, a pared-down version of Adobe Photoshop or Th
 The executable runs on the command line. It reads an image from a specified file, processes the image using the filter specified by the command line arguments, and writes the resulting image to the specified file.
 The command line parser is set up to read the arguments from the command line that are specified in the following format: First the parameter name is specified by pre-pending with two hyphens, and then the parameter values are enumerated. (Note that the number of arguments associated to each parameter are fixed in main1.cpp and the order in which the parameters are specified is ignored.)
 For example, to increase the brightness of the image in.bmp by 10%, and save the result in the image out.bmp, you would type:
-% Assignment1 --brighten 1.1 --in in.bmp --out out.bmp
+% ImageProcessing --brighten 1.1 --in in.bmp --out out.bmp
 To see the full list of possible arguments, you can simply type:
-% Assignment1
+% ImageProcessing
 
 ## Simple Raytracer (main2/Makefile2)
 
 The implementation of a basic raytracer.
 
 The executable takes in to mandatory arguments, the input (.ray) file name and the output image file name (.bmp, .jpeg, or .jpg). Additionally, you can pass in the dimensions of the output image, the recursion depth, and the cut-off value for early termination. It is invoked from the command line with:
-% Assignment2 --in <input ray-file name> --out <output image file name>
+% RayTracer --in <input ray-file name> --out <output image file name>
 Optional arguments (with default values) are:
 --width <image width>=640
 --height <image height>=480
@@ -29,7 +29,7 @@ Optional arguments (with default values) are:
 Practice with the OpenGL graphics library. This program generates a room scene which can be navigated in a walk-through fashion. Emphasis is placed both upon the implemention of OpenGL's basic capabilities (e.g. shading. lighting, transparency, materials properties, etc.) and their use in generating more involved effects (e.g. shadows, reflections.)
 
 The executable takes in as a mandatory arguments the input (.ray) .ray file name. Additionally, you can also pass in the dimensions of the viewing window and the complexity of the tesselation for objects like the sphere, the cylinder, and the cone. (Specifically, this specifies the resolution, e.g. the number of angular samples.) It is invoked from the command line with:
-% Assignment3 --in in.ray --width w --height h --cplx c
+% OpenGLPractice --in in.ray --width w --height h --cplx c
 
 ## Keyframe Animation
 
@@ -48,7 +48,7 @@ QuaternionRotationParameter which represents a transformation by a unit Quaterni
 While these classes represent transformations in different ways, they all store data that support addition, subtraction, and (right) scalar multiplication.
 
 The executable takes in as a mandatory arguments the input (.ray) .ray file name. Additionally, you can also pass in the dimensions of the viewing window, the complexity of the tesselation for objects like the sphere, the cylinder, and the cone, the manner in which rotations should be parameterized, and the way transformations should be blended. It is invoked from the command line with:
-% Assignment4 --in <input ray file> --width <width> --height <height> --cplx <complexity> --parameter <matrix representation> --interpolant <interpolation type>
+% KeyframeAnimation --in <input ray file> --width <width> --height <height> --cplx <complexity> --parameter <matrix representation> --interpolant <interpolation type>
 The --parameter argument specifies how the rotations will be parameterized. Options include
 1: Rotations are represented by 3x3 matrices, the matrices are blended, and the blended transformation (not necessarily rotation) is returned.
 2: Rotations are represented by 3x3 matrices, the matrices are blended, and the closest rotation to the blended transformation is returned.
