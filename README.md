@@ -24,14 +24,14 @@ Optional arguments (with default values) are:
 --cutOff <recursion cut-off threshold>=0.0001
 --lSamples <number of light samples>=100
 
-## OpenGL Practicing
+## OpenGL Practicing (main3/Makefile3)
 
 Practice with the OpenGL graphics library. This program generates a room scene which can be navigated in a walk-through fashion. Emphasis is placed both upon the implemention of OpenGL's basic capabilities (e.g. shading. lighting, transparency, materials properties, etc.) and their use in generating more involved effects (e.g. shadows, reflections.)
 
 The executable takes in as a mandatory arguments the input (.ray) .ray file name. Additionally, you can also pass in the dimensions of the viewing window and the complexity of the tesselation for objects like the sphere, the cylinder, and the cone. (Specifically, this specifies the resolution, e.g. the number of angular samples.) It is invoked from the command line with:
 % OpenGLPractice --in in.ray --width w --height h --cplx c
 
-## Keyframe Animation
+## Keyframe Animation (main4/Makefile4)
 
 In addition to rendering static models, this program allows you to render animated 3D models. The key to doing this is the class DynamicAffineShape (in Ray/shapeList.[h/cpp]). which represents a transformation node in the scene-graph hierarchy whose value is a function of the time elapsed. This object stores a pointer DynamicAffineShape::_matrix to a Matrix4D. At each frame, the transformation DynamicAffineShape::_matrix is changed, and as a result, OpenGL renders a new image.
 More specifically, animation is achieved through the use of the template class KeyFrameData (in Ray/keyFrames.h and Ray/keyFrames.inl). This class:
