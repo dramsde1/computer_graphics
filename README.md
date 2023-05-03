@@ -10,6 +10,8 @@ For example, to increase the brightness of the image in.bmp by 10%, and save the
 
 
 % Assignment1 --brighten 1.1 --in in.bmp --out out.bmp
+
+
 To see the full list of possible arguments, you can simply type:
 % ImageProcessing
 
@@ -21,6 +23,8 @@ The executable takes in to mandatory arguments, the input (.ray) file name and t
 
 
 % Assignment2 --in <input ray-file name> --out <output image file name>
+  
+  
 Optional arguments (with default values) are:
 --width <image width>=640
 --height <image height>=480
@@ -57,6 +61,8 @@ The executable takes in as a mandatory arguments the input (.ray) .ray file name
 
 
 % Assignment4 --in <input ray file> --width <width> --height <height> --cplx <complexity> --parameter <matrix representation> --interpolant <interpolation type>
+
+  
 The --parameter argument specifies how the rotations will be parameterized. Options include
 1: Rotations are represented by 3x3 matrices, the matrices are blended, and the blended transformation (not necessarily rotation) is returned.
 2: Rotations are represented by 3x3 matrices, the matrices are blended, and the closest rotation to the blended transformation is returned.
