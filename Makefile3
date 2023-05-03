@@ -1,4 +1,4 @@
-TARGET = OpenGLPractice
+TARGET = Assignment3
 DEPENDENDENT_DIRS = Image Util Ray GL
 SOURCE = main3.cpp
 

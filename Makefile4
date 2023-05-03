@@ -1,4 +1,4 @@
-TARGET = KeyframeAnimation
+TARGET = Assignment4
 DEPENDENDENT_DIRS = Image Util Ray GL
 SOURCE = main4.cpp
 

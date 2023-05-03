@@ -1,4 +1,4 @@
-TARGET = ImageProcessing
+TARGET = Assignment1
 DEPENDENDENT_DIRS = Image Util
 SOURCE = main1.cpp
 
